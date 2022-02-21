@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
  * @OA\Schema(
- *      schema="Stationary event",
+ *      schema="stationary-event",
  *      required={"name", "description", "started_at", "finished_at"},
  *      @OA\Property(
  *          property="id",
@@ -38,11 +38,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  *          type="datetime",
  *      ),
  *      @OA\Property(
- *          property="base_price",
- *          description="base_price",
- *          type="integer"
- *      ),
- *      @OA\Property(
  *          property="max_participants",
  *          description="max_participants",
  *          type="integer"
@@ -53,8 +48,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  *          type="string"
  *      ),
  *      @OA\Property(
- *          property="programm",
- *          description="programm",
+ *          property="program",
+ *          description="program",
  *          type="string"
  *      ),
  *      @OA\Property(
@@ -79,7 +74,6 @@ class StationaryEvent extends Model
         'description',
         'started_at',
         'finished_at',
-        'base_price',
         'max_participants',
         'place',
         'program',
