@@ -17,6 +17,7 @@ class StationaryEventResource extends JsonResource
             'max_participants' => $this->max_participants,
             'place' => $this->place,
             'program' => $this->program,
+            'tags' => $this->tags,
             'authors' => $this->authors ? UserResource::collection($this->authors) : [],
         ];
     }

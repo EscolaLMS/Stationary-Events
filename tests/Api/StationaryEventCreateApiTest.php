@@ -86,4 +86,19 @@ class StationaryEventCreateApiTest extends TestCase
 
         Event::assertDispatched(StationaryEventAuthorAssigned::class);
     }
+
+    public function testStationaryEventCreateWithTags(): void
+    {
+        $stationaryEvent = StationaryEvent::factory()->make()->toArray();
+        $stationaryEvent['tags'] = ['Stationary', 'Event', 'Tags'];
+
+        $this->response = $this->actingAs($this->user, 'api')->postJson(
+            'api/admin/stationary-events',
+            $stationaryEvent
+        )->assertCreated();
+
+        foreach ($this->response->getData()->data->tags as $tag) {
+            $this->assertTrue(in_array($tag->title, $stationaryEvent['tags']));
+        }
+    }
 }

@@ -11,7 +11,7 @@ use EscolaLms\StationaryEvents\Services\Contracts\StationaryEventServiceContract
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class StationaryEventApiController  extends EscolaLmsBaseController implements StationaryEventApiSwagger
+class StationaryEventApiController extends EscolaLmsBaseController implements StationaryEventApiSwagger
 {
     private StationaryEventServiceContract $stationaryEventService;
 

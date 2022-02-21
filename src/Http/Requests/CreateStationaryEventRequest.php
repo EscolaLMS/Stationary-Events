@@ -24,8 +24,11 @@ class CreateStationaryEventRequest extends FormRequest
             'base_price' => ['nullable', 'integer', 'min:0'],
             'max_participants' => ['nullable', 'integer', 'min:0'],
             'place' => ['nullable', 'string', 'max:255'],
-            'program' => ['nullable', 'string'],
+            'program' => ['nullable', 'string', 'max:255'],
+            'authors' => ['nullable', 'array'],
             'authors.*' => ['integer', new ValidAuthor()],
+            'tags' => ['nullable', 'array'],
+            'tags.*' => ['nullable', 'string'],
         ];
     }
 }

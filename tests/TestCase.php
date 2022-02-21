@@ -8,6 +8,7 @@ use EscolaLms\Auth\Tests\Models\Client;
 use EscolaLms\Core\Tests\TestCase as CoreTestCase;
 use EscolaLms\StationaryEvents\Database\Seeders\StationaryEventPermissionSeeder;
 use EscolaLms\StationaryEvents\EscolaLmsStationaryEventsServiceProvider;
+use EscolaLms\Tags\EscolaLmsTagsServiceProvider;
 use Illuminate\Testing\TestResponse;
 use Laravel\Passport\Passport;
 use Laravel\Passport\PassportServiceProvider;
@@ -32,6 +33,7 @@ class TestCase extends CoreTestCase
             EscolaLmsStationaryEventsServiceProvider::class,
             PermissionServiceProvider::class,
             PassportServiceProvider::class,
+            EscolaLmsTagsServiceProvider::class,
         ];
     }
 
@@ -40,7 +42,7 @@ class TestCase extends CoreTestCase
         $app['config']->set('auth.providers.users.model', User::class);
         $app['config']->set('passport.client_uuids', true);
         $app['config']->set('database.connections.mysql.strict', false);
-        $app['config']->set('app.debug', (bool) env('APP_DEBUG', true));
+        $app['config']->set('app.debug', (bool)env('APP_DEBUG', true));
     }
 
     public function assertApiResponse(array $actualData)

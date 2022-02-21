@@ -2,7 +2,6 @@
 
 namespace EscolaLms\StationaryEvents\Database\Factories;
 
-use EscolaLms\StationaryEvents\Enum\StationaryEventTypesEnum;
 use EscolaLms\StationaryEvents\Models\StationaryEvent;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -10,7 +9,7 @@ class StationaryEventFactory extends Factory
 {
     protected $model = StationaryEvent::class;
 
-    public function definition()
+    public function definition(): array
     {
         $startDate = $this->faker->dateTimeBetween('+2 month', '+6 month');
 

@@ -53,14 +53,15 @@ class StationaryEventService implements StationaryEventServiceContract
     {
         $stationaryEvent = $this->stationaryEventRepository->create($data);
         $this->syncAuthors($stationaryEvent, $data['authors'] ?? []);
-
+        $this->saveTags($stationaryEvent, $data['tags'] ?? []);
         return $stationaryEvent;
     }
 
     public function update(StationaryEvent $stationaryEvent, array $data): StationaryEvent
     {
         $stationaryEvent = $this->stationaryEventRepository->update($data, $stationaryEvent->getKey());
-        $this->syncAuthors($stationaryEvent,$data['authors'] ?? []);
+        $this->syncAuthors($stationaryEvent, $data['authors'] ?? []);
+        $this->saveTags($stationaryEvent, $data['tags'] ?? []);
 
         return $stationaryEvent;
     }
@@ -90,17 +91,30 @@ class StationaryEventService implements StationaryEventServiceContract
 
     }
 
-    private function dispatchEventForUsersAttachedToStationaryEvent(StationaryEvent $stationaryEvent, array $users = []): void {
+    private function dispatchEventForUsersAttachedToStationaryEvent(StationaryEvent $stationaryEvent, array $users = []): void
+    {
         foreach ($users as $attached) {
             $user = is_int($attached) ? User::find($attached) : $attached;
             event(new StationaryEventAssigned($user, $stationaryEvent));
         }
     }
 
-    private function dispatchEventForUsersDetachedToStationaryEvent(StationaryEvent $stationaryEvent, array $users = []): void {
+    private function dispatchEventForUsersDetachedToStationaryEvent(StationaryEvent $stationaryEvent, array $users = []): void
+    {
         foreach ($users as $detached) {
             $user = is_int($detached) ? User::find($detached) : $detached;
             event(new StationaryEventUnassigned($user, $stationaryEvent));
         }
+    }
+
+    private function saveTags(StationaryEvent $stationaryEvent, array $tagArray = []): void
+    {
+        $stationaryEvent->tags()->delete();
+
+        $tags = array_map(function ($tag) {
+            return ['title' => $tag];
+        }, $tagArray);
+
+        $stationaryEvent->tags()->createMany($tags);
     }
 }

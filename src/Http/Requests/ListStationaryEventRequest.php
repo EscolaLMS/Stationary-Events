@@ -13,7 +13,8 @@ class ListStationaryEventRequest extends FormRequest
         return Gate::allows('list', StationaryEvent::class);
     }
 
-    public function rules(): array{
+    public function rules(): array
+    {
         return [];
     }
 }
