@@ -66,9 +66,9 @@ class StationaryEventService implements StationaryEventServiceContract
         return $stationaryEvent;
     }
 
-    public function delete(StationaryEvent $stationaryEvent): ?bool
+    public function delete(StationaryEvent $stationaryEvent): bool
     {
-        return $this->stationaryEventRepository->delete($stationaryEvent->getKey());
+        return $this->stationaryEventRepository->delete($stationaryEvent->getKey()) ?? false;
     }
 
     public function addAccessForUsers(StationaryEvent $stationaryEvent, array $users = []): void
@@ -88,7 +88,6 @@ class StationaryEventService implements StationaryEventServiceContract
         foreach ($syncResult['detached'] as $attached) {
             event(new StationaryEventAuthorUnassigned(User::find($attached), $stationaryEvent));
         }
-
     }
 
     private function dispatchEventForUsersAttachedToStationaryEvent(StationaryEvent $stationaryEvent, array $users = []): void

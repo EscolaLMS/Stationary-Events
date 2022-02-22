@@ -28,10 +28,18 @@ class StationaryEventDeleteApiTest extends TestCase
 
     public function testStationaryEventDelete(): void
     {
+        $this->stationaryEvent->users()->sync([$this->makeStudent()->getKey()]);
+        $this->stationaryEvent->authors()->sync([$this->makeInstructor()->getKey()]);
+        $this->stationaryEvent->tags()->createMany([['title' => 'Stationary'], ['title' => 'Event']]);
+
         $this->actingAs($this->user, 'api')
             ->deleteJson('api/admin/stationary-events/' . $this->stationaryEvent->getKey())
             ->assertOk()
             ->assertJsonFragment(['success' => true]);
+
+        $this->assertDatabaseMissing('stationary_events', [
+            'id' => $this->stationaryEvent->getKey(),
+        ]);
     }
 
     public function testStationaryEventDeleteNotFound(): void

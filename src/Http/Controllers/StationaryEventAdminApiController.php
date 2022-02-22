@@ -4,6 +4,7 @@ namespace EscolaLms\StationaryEvents\Http\Controllers;
 
 use EscolaLms\Core\Dtos\OrderDto;
 use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
+use EscolaLms\StationaryEvents\Enum\ConstantEnum;
 use EscolaLms\StationaryEvents\Http\Controllers\Swagger\StationaryEventAdminApiSwagger;
 use EscolaLms\StationaryEvents\Http\Requests\CreateStationaryEventRequest;
 use EscolaLms\StationaryEvents\Http\Requests\DeleteStationaryEventRequest;
@@ -30,7 +31,7 @@ class StationaryEventAdminApiController extends EscolaLmsBaseController implemen
 
         $stationaryEvents = $this->stationaryEventService
             ->getStationaryEventList($orderDto, $search)
-            ->paginate($request->get('per_page') ?? 15);
+            ->paginate($request->get('per_page') ?? ConstantEnum::PER_PAGE);
 
         return $this->sendResponseForResource(
             StationaryEventAdminResource::collection($stationaryEvents),
@@ -65,7 +66,9 @@ class StationaryEventAdminApiController extends EscolaLmsBaseController implemen
 
     public function delete(DeleteStationaryEventRequest $request): JsonResponse
     {
-        $this->stationaryEventService->delete($request->getStationaryEvent());
+        if (!$this->stationaryEventService->delete($request->getStationaryEvent())) {
+            return $this->sendError(__('Error while deleting a stationary event'));
+        }
 
         return $this->sendSuccess(__('Stationary event deleted successfully'));
     }

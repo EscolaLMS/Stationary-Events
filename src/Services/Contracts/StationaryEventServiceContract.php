@@ -11,6 +11,6 @@ interface StationaryEventServiceContract
     public function getStationaryEventList(OrderDto $orderDto, array $search = [], bool $onlyActive = false): Builder;
     public function create(array $data): StationaryEvent;
     public function update(StationaryEvent $stationaryEvent, array $data): StationaryEvent;
-    public function delete(StationaryEvent $stationaryEvent): ?bool;
+    public function delete(StationaryEvent $stationaryEvent): bool;
     public function addAccessForUsers(StationaryEvent $stationaryEvent, array $users = []): void;
 }

@@ -11,12 +11,9 @@ interface StationaryEventApiSwagger
     /**
      * @OA\Get(
      *      path="/api/stationary-events",
-     *      summary="Get a listing of the Stationary events",
+     *      summary="Get a listing of the active Stationary events",
      *      tags={"Stationary Events"},
      *      description="Get all active Stationary Events",
-     *      security={
-     *         {"passport": {}},
-     *      },
      *      @OA\Parameter(
      *          name="order_by",
      *          required=false,
@@ -93,13 +90,10 @@ interface StationaryEventApiSwagger
 
     /**
      * @OA\Get(
-     *      path="/api/admin/stationary-events/{id}",
+     *      path="/api/stationary-events/{id}",
      *      summary="Display the specified Stationary Event",
      *      tags={"Stationary Events"},
      *      description="Get Stationary Event",
-     *      security={
-     *          {"passport": {}},
-     *      },
      *      @OA\Parameter(
      *          name="id",
      *          description="id of Stationary event",

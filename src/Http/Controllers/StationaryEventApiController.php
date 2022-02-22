@@ -4,6 +4,7 @@ namespace EscolaLms\StationaryEvents\Http\Controllers;
 
 use EscolaLms\Core\Dtos\OrderDto;
 use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
+use EscolaLms\StationaryEvents\Enum\ConstantEnum;
 use EscolaLms\StationaryEvents\Http\Controllers\Swagger\StationaryEventApiSwagger;
 use EscolaLms\StationaryEvents\Http\Requests\ReadStationaryEventPublicRequest;
 use EscolaLms\StationaryEvents\Http\Resources\StationaryEventResource;
@@ -27,7 +28,7 @@ class StationaryEventApiController extends EscolaLmsBaseController implements St
 
         $stationaryEvents = $this->stationaryEventService
             ->getStationaryEventList($orderDto, $search, true)
-            ->paginate($request->get('per_page') ?? 15);
+            ->paginate($request->get('per_page') ?? ConstantEnum::PER_PAGE);
 
         return $this->sendResponseForResource(
             StationaryEventResource::collection($stationaryEvents),
