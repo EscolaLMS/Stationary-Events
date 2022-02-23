@@ -2,7 +2,6 @@
 
 namespace EscolaLms\StationaryEvents\Database\Factories;
 
-use EscolaLms\StationaryEvents\Enum\StationaryEventTypesEnum;
 use EscolaLms\StationaryEvents\Models\StationaryEvent;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -10,16 +9,15 @@ class StationaryEventFactory extends Factory
 {
     protected $model = StationaryEvent::class;
 
-    public function definition()
+    public function definition(): array
     {
-        $startDate = $this->faker->dateTimeBetween('-6 month', '+6 month');
+        $startDate = $this->faker->dateTimeBetween('+2 month', '+6 month');
 
         return [
             'name' => $this->faker->sentence(10),
             'description' => $this->faker->sentence,
-            'started_at' => $startDate,
-            'finished_at' => (clone $startDate)->modify('+' . random_int(1, 5) . ' hour'),
-            'base_price' => $this->faker->numberBetween(1, 200),
+            'started_at' => $startDate->format('Y-m-d H:i:s'),
+            'finished_at' => (clone $startDate)->modify('+' . random_int(1, 5) . ' hour')->format('Y-m-d H:i:s'),
             'place' => $this->faker->city,
             'max_participants' => $this->faker->numberBetween(1, 200),
         ];

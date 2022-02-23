@@ -4,13 +4,15 @@ namespace EscolaLms\StationaryEvents\Models;
 
 use EscolaLms\Auth\Models\User;
 use EscolaLms\StationaryEvents\Database\Factories\StationaryEventFactory;
+use EscolaLms\Tags\Models\Tag;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 /**
  * @OA\Schema(
- *      schema="Stationary event",
+ *      schema="stationary-event",
  *      required={"name", "description", "started_at", "finished_at"},
  *      @OA\Property(
  *          property="id",
@@ -38,11 +40,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  *          type="datetime",
  *      ),
  *      @OA\Property(
- *          property="base_price",
- *          description="base_price",
- *          type="integer"
- *      ),
- *      @OA\Property(
  *          property="max_participants",
  *          description="max_participants",
  *          type="integer"
@@ -53,8 +50,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  *          type="string"
  *      ),
  *      @OA\Property(
- *          property="programm",
- *          description="programm",
+ *          property="program",
+ *          description="program",
  *          type="string"
  *      ),
  *      @OA\Property(
@@ -79,7 +76,6 @@ class StationaryEvent extends Model
         'description',
         'started_at',
         'finished_at',
-        'base_price',
         'max_participants',
         'place',
         'program',
@@ -93,6 +89,11 @@ class StationaryEvent extends Model
     public function authors(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'stationary_event_authors', 'stationary_event_id', 'author_id')->using(StationaryEventAuthorPivot::class);
+    }
+
+    public function tags(): MorphMany
+    {
+        return $this->morphMany(Tag::class, 'morphable');
     }
 
     protected static function newFactory(): StationaryEventFactory

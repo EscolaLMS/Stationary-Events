@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateStationaryEventsTable extends Migration
 {
-    public function up()
+    public function up(): void
     {
         Schema::create('stationary_events', function (Blueprint $table) {
             $table->id();
@@ -22,7 +22,7 @@ class CreateStationaryEventsTable extends Migration
         });
     }
 
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('stationary_events');
     }
