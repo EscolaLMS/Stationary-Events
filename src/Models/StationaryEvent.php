@@ -3,12 +3,11 @@
 namespace EscolaLms\StationaryEvents\Models;
 
 use EscolaLms\Auth\Models\User;
+use EscolaLms\Categories\Models\Category;
 use EscolaLms\StationaryEvents\Database\Factories\StationaryEventFactory;
-use EscolaLms\Tags\Models\Tag;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 /**
  * @OA\Schema(
@@ -91,9 +90,9 @@ class StationaryEvent extends Model
         return $this->belongsToMany(User::class, 'stationary_event_authors', 'stationary_event_id', 'author_id')->using(StationaryEventAuthorPivot::class);
     }
 
-    public function tags(): MorphMany
+    public function categories(): BelongsToMany
     {
-        return $this->morphMany(Tag::class, 'morphable');
+        return $this->belongsToMany(Category::class);
     }
 
     protected static function newFactory(): StationaryEventFactory

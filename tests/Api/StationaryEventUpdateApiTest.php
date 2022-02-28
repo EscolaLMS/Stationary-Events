@@ -2,6 +2,7 @@
 
 namespace EscolaLms\StationaryEvents\Tests\Api;
 
+use EscolaLms\Categories\Models\Category;
 use EscolaLms\Core\Tests\CreatesUsers;
 use EscolaLms\StationaryEvents\Database\Seeders\StationaryEventPermissionSeeder;
 use EscolaLms\StationaryEvents\Events\StationaryEventAuthorAssigned;
@@ -10,6 +11,7 @@ use EscolaLms\StationaryEvents\Models\StationaryEvent;
 use EscolaLms\StationaryEvents\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Testing\Fluent\AssertableJson;
 
 class StationaryEventUpdateApiTest extends TestCase
 {
@@ -20,7 +22,9 @@ class StationaryEventUpdateApiTest extends TestCase
         parent::setUp();
         $this->seed(StationaryEventPermissionSeeder::class);
         $this->user = $this->makeInstructor();
-        $this->stationaryEvent = StationaryEvent::factory()->create();
+        $this->stationaryEvent = StationaryEvent::factory()
+            ->has(Category::factory())
+            ->create();
     }
 
     public function testStationaryEventUpdateUnauthorized(): void
@@ -100,19 +104,47 @@ class StationaryEventUpdateApiTest extends TestCase
         Event::assertDispatched(StationaryEventAuthorUnassigned::class);
     }
 
-
-    public function testStationaryEventUpdateWithTags(): void
+    public function testStationaryEventUpdateWithCategories(): void
     {
+        $categories = Category::factory()->count(2)->create()->pluck('id')->toArray();
         $stationaryEvent = StationaryEvent::factory()->make()->toArray();
-        $stationaryEvent['tags'] = ['Stationary', 'Event', 'Tags'];
+        $stationaryEvent['categories'] = $categories;
 
         $this->response = $this->actingAs($this->user, 'api')->putJson(
             'api/admin/stationary-events/' . $this->stationaryEvent->getKey(),
             $stationaryEvent
         )->assertOk();
 
-        foreach ($this->response->getData()->data->tags as $tag) {
-            $this->assertTrue(in_array($tag->title, $stationaryEvent['tags']));
-        }
+        $this->response->assertJsonFragment([
+            'name' => $stationaryEvent['name'],
+            'description' => $stationaryEvent['description'],
+            'started_at' => $stationaryEvent['started_at'],
+            'finished_at' => $stationaryEvent['finished_at'],
+            'place' => $stationaryEvent['place'],
+            'max_participants' => $stationaryEvent['max_participants'],
+        ]);
+        $this->response->assertJsonCount(2, 'data.categories');
+        $this->response->assertJson(fn(AssertableJson $json) => $json->has(
+            'data', fn($json) => $json->has(
+                'categories', fn(AssertableJson $json) => $json->each(
+                    fn(AssertableJson $json) => $json->where('id', fn($json) => in_array($json, $categories))->etc()
+                )->etc()
+            )->etc()
+        )->etc());
+    }
+
+    public function testStationaryEventUpdateRemoveCategories(): void
+    {
+        $stationaryEvent = StationaryEvent::factory()->make()->toArray();
+        $stationaryEvent['categories'] = [];
+
+        $this->assertCount(1, $this->stationaryEvent->categories);
+
+        $this->response = $this->actingAs($this->user, 'api')->putJson(
+            'api/admin/stationary-events/' . $this->stationaryEvent->getKey(),
+            $stationaryEvent
+        )->assertOk();
+
+        $this->response->assertJsonCount(0, 'data.categories');
     }
 }

@@ -2,6 +2,7 @@
 
 namespace EscolaLms\StationaryEvents\Tests\Api;
 
+use EscolaLms\Categories\Models\Category;
 use EscolaLms\Core\Tests\CreatesUsers;
 use EscolaLms\StationaryEvents\Database\Seeders\StationaryEventPermissionSeeder;
 use EscolaLms\StationaryEvents\Models\StationaryEvent;
@@ -17,7 +18,9 @@ class StationaryEventDeleteApiTest extends TestCase
         parent::setUp();
         $this->seed(StationaryEventPermissionSeeder::class);
         $this->user = $this->makeInstructor();
-        $this->stationaryEvent = StationaryEvent::factory()->create();
+        $this->stationaryEvent = StationaryEvent::factory()
+            ->has(Category::factory())
+            ->create();
     }
 
     public function testStationaryEventDeleteUnauthorized(): void
@@ -30,7 +33,6 @@ class StationaryEventDeleteApiTest extends TestCase
     {
         $this->stationaryEvent->users()->sync([$this->makeStudent()->getKey()]);
         $this->stationaryEvent->authors()->sync([$this->makeInstructor()->getKey()]);
-        $this->stationaryEvent->tags()->createMany([['title' => 'Stationary'], ['title' => 'Event']]);
 
         $this->actingAs($this->user, 'api')
             ->deleteJson('api/admin/stationary-events/' . $this->stationaryEvent->getKey())
