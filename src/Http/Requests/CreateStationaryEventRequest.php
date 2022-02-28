@@ -55,11 +55,11 @@ use Illuminate\Support\Facades\Gate;
  *          )
  *      ),
  *      @OA\Property(
- *          property="tags",
- *          description="tags",
+ *          property="categories",
+ *          description="categories",
  *          type="array",
  *          @OA\Items(
- *              type="string",
+ *              type="integer",
  *          )
  *      ),
  * )
@@ -85,8 +85,8 @@ class CreateStationaryEventRequest extends FormRequest
             'program' => ['nullable', 'string', 'max:255'],
             'authors' => ['nullable', 'array'],
             'authors.*' => ['integer', new ValidAuthor()],
-            'tags' => ['nullable', 'array'],
-            'tags.*' => ['nullable', 'string'],
+            'categories' => ['array'],
+            'categories.*' => ['integer', 'exists:categories,id'],
         ];
     }
 }

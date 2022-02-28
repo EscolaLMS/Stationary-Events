@@ -48,12 +48,15 @@ class StationaryEventService implements StationaryEventServiceContract
         )->with(['authors']);
     }
 
-
     public function create(array $data): StationaryEvent
     {
         $stationaryEvent = $this->stationaryEventRepository->create($data);
         $this->syncAuthors($stationaryEvent, $data['authors'] ?? []);
-        $this->saveTags($stationaryEvent, $data['tags'] ?? []);
+
+        if (isset($data['categories']) && is_array($data['categories'])) {
+            $stationaryEvent->categories()->sync($data['categories']);
+        }
+
         return $stationaryEvent;
     }
 
@@ -61,7 +64,10 @@ class StationaryEventService implements StationaryEventServiceContract
     {
         $stationaryEvent = $this->stationaryEventRepository->update($data, $stationaryEvent->getKey());
         $this->syncAuthors($stationaryEvent, $data['authors'] ?? []);
-        $this->saveTags($stationaryEvent, $data['tags'] ?? []);
+
+        if (isset($data['categories']) && is_array($data['categories'])) {
+            $stationaryEvent->categories()->sync($data['categories']);
+        }
 
         return $stationaryEvent;
     }
@@ -104,16 +110,5 @@ class StationaryEventService implements StationaryEventServiceContract
             $user = is_int($detached) ? User::find($detached) : $detached;
             event(new StationaryEventUnassigned($user, $stationaryEvent));
         }
-    }
-
-    private function saveTags(StationaryEvent $stationaryEvent, array $tagArray = []): void
-    {
-        $stationaryEvent->tags()->delete();
-
-        $tags = array_map(function ($tag) {
-            return ['title' => $tag];
-        }, $tagArray);
-
-        $stationaryEvent->tags()->createMany($tags);
     }
 }

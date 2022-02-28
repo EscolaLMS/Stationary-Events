@@ -5,10 +5,10 @@ namespace EscolaLms\StationaryEvents\Tests;
 use EscolaLms\Auth\EscolaLmsAuthServiceProvider;
 use EscolaLms\Auth\Models\User;
 use EscolaLms\Auth\Tests\Models\Client;
+use EscolaLms\Categories\EscolaLmsCategoriesServiceProvider;
 use EscolaLms\Core\Tests\TestCase as CoreTestCase;
 use EscolaLms\StationaryEvents\Database\Seeders\StationaryEventPermissionSeeder;
 use EscolaLms\StationaryEvents\EscolaLmsStationaryEventsServiceProvider;
-use EscolaLms\Tags\EscolaLmsTagsServiceProvider;
 use Illuminate\Testing\TestResponse;
 use Laravel\Passport\Passport;
 use Laravel\Passport\PassportServiceProvider;
@@ -30,10 +30,10 @@ class TestCase extends CoreTestCase
         return [
             ...parent::getPackageProviders($app),
             EscolaLmsAuthServiceProvider::class,
-            EscolaLmsStationaryEventsServiceProvider::class,
             PermissionServiceProvider::class,
             PassportServiceProvider::class,
-            EscolaLmsTagsServiceProvider::class,
+            EscolaLmsCategoriesServiceProvider::class,
+            EscolaLmsStationaryEventsServiceProvider::class,
         ];
     }
 
