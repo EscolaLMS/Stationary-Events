@@ -15,6 +15,7 @@ use EscolaLms\StationaryEvents\Models\StationaryEvent;
 use EscolaLms\StationaryEvents\Repositories\Contracts\StationaryEventRepositoryContract;
 use EscolaLms\StationaryEvents\Services\Contracts\StationaryEventServiceContract;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\UploadedFile;
 
 class StationaryEventService implements StationaryEventServiceContract
 {
@@ -57,11 +58,20 @@ class StationaryEventService implements StationaryEventServiceContract
             $stationaryEvent->categories()->sync($data['categories']);
         }
 
+        if (isset($data['image'])) {
+            $stationaryEvent->image_path = $this->saveImage($data['image'], $stationaryEvent->getKey());
+            $stationaryEvent->save();
+        }
+
         return $stationaryEvent;
     }
 
     public function update(StationaryEvent $stationaryEvent, array $data): StationaryEvent
     {
+        if (isset($data['image'])) {
+            $data['image_path'] = $this->saveImage($data['image'], $stationaryEvent->getKey());
+        }
+
         $stationaryEvent = $this->stationaryEventRepository->update($data, $stationaryEvent->getKey());
         $this->syncAuthors($stationaryEvent, $data['authors'] ?? []);
 
@@ -110,5 +120,10 @@ class StationaryEventService implements StationaryEventServiceContract
             $user = is_int($detached) ? User::find($detached) : $detached;
             event(new StationaryEventUnassigned($user, $stationaryEvent));
         }
+    }
+
+    private function saveImage(UploadedFile $image, int $stationaryEventId): string
+    {
+        return $image->storePublicly("stationary-events/{$stationaryEventId}/images");
     }
 }

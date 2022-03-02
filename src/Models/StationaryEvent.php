@@ -54,6 +54,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  *          type="string"
  *      ),
  *      @OA\Property(
+ *          property="image_path",
+ *          description="image_path",
+ *          type="string"
+ *      ),
+ *      @OA\Property(
  *          property="created_at",
  *          description="created_at",
  *          type="datetime",
@@ -78,6 +83,7 @@ class StationaryEvent extends Model
         'max_participants',
         'place',
         'program',
+        'image_path',
     ];
 
     public function users(): BelongsToMany

@@ -10,7 +10,9 @@ use EscolaLms\StationaryEvents\Events\StationaryEventAuthorUnassigned;
 use EscolaLms\StationaryEvents\Models\StationaryEvent;
 use EscolaLms\StationaryEvents\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 class StationaryEventUpdateApiTest extends TestCase
@@ -42,12 +44,20 @@ class StationaryEventUpdateApiTest extends TestCase
 
     public function testStationaryEventUpdate(): void
     {
+        Storage::fake();
+
         $stationaryEvent = StationaryEvent::factory()->make()->toArray();
+
         $this->response = $this->actingAs($this->user, 'api')
-            ->putJson('api/admin/stationary-events/' . $this->stationaryEvent->getKey(), $stationaryEvent)
-            ->assertOk();
+            ->putJson('api/admin/stationary-events/' . $this->stationaryEvent->getKey(),
+                array_merge($stationaryEvent, [
+                    'image' => UploadedFile::fake()->image('image.jpg')
+                ])
+            )->assertOk();
 
         $this->assertApiResponse($stationaryEvent);
+        $data = $this->response->getData()->data;
+        Storage::exists($data->image_path);
     }
 
     public function testStationaryEventUpdateAuthorMustByTutor(): void
