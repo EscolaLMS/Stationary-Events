@@ -62,6 +62,11 @@ use Illuminate\Support\Facades\Gate;
  *              type="integer",
  *          )
  *      ),
+ *      @OA\Property(
+ *          property="image",
+ *          description="image",
+ *          type="file",
+ *      ),
  * )
  *
  */
@@ -87,6 +92,7 @@ class CreateStationaryEventRequest extends FormRequest
             'authors.*' => ['integer', new ValidAuthor()],
             'categories' => ['array'],
             'categories.*' => ['integer', 'exists:categories,id'],
+            'image' => ['nullable', 'file', 'image'],
         ];
     }
 }

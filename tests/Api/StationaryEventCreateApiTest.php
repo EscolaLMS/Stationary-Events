@@ -9,7 +9,9 @@ use EscolaLms\StationaryEvents\Events\StationaryEventAuthorAssigned;
 use EscolaLms\StationaryEvents\Models\StationaryEvent;
 use EscolaLms\StationaryEvents\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 class StationaryEventCreateApiTest extends TestCase
@@ -49,6 +51,24 @@ class StationaryEventCreateApiTest extends TestCase
     }
 
     public function testStationaryEventCreate(): void
+    {
+        Storage::fake();
+        $stationaryEvent = StationaryEvent::factory()->make()->toArray();
+
+        $this->response = $this->actingAs($this->user, 'api')->postJson(
+            'api/admin/stationary-events',
+            array_merge($stationaryEvent, [
+                'image' => UploadedFile::fake()->image('image.jpg')
+            ]))
+            ->assertCreated();
+
+
+        $this->assertApiResponse($stationaryEvent);
+        $data = $this->response->getData()->data;
+        Storage::exists($data->image_path);
+    }
+
+    public function testStationaryEventCreateWithoutImage(): void
     {
         $stationaryEvent = StationaryEvent::factory()->make()->toArray();
 

@@ -3,6 +3,7 @@
 namespace EscolaLms\StationaryEvents\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 class StationaryEventResource extends JsonResource
 {
@@ -19,6 +20,8 @@ class StationaryEventResource extends JsonResource
             'program' => $this->program,
             'categories' => $this->categories,
             'authors' => $this->authors ? UserResource::collection($this->authors) : [],
+            'image_path' => $this->image_path,
+            'image_url' => $this->image_path ? Storage::url($this->image_path) : null,
         ];
     }
 }
