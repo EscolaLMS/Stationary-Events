@@ -35,13 +35,6 @@ class StationaryEventUpdateApiTest extends TestCase
             ->assertUnauthorized();
     }
 
-    public function testStationaryEventUpdateRequiredValidation(): void
-    {
-        $response = $this->actingAs($this->user, 'api')
-            ->putJson('api/admin/stationary-events/' . $this->stationaryEvent->getKey());
-        $response->assertJsonValidationErrors(['name', 'started_at', 'finished_at', 'description']);
-    }
-
     public function testStationaryEventUpdate(): void
     {
         Storage::fake();
@@ -58,6 +51,54 @@ class StationaryEventUpdateApiTest extends TestCase
         $this->assertApiResponse($stationaryEvent);
         $data = $this->response->getData()->data;
         Storage::exists($data->image_path);
+    }
+
+    public function testStationaryEventPartialUpdate(): void
+    {
+        $stationaryEvent = StationaryEvent::factory()->create([
+            'name' => 'Title',
+            'place' => 'Place',
+            'max_participants' => 4,
+        ]);
+
+        $this->response = $this->actingAs($this->user, 'api')
+            ->putJson('api/admin/stationary-events/' . $stationaryEvent->getKey(), [
+                'name' => 'New title',
+            ])
+            ->assertOk();
+
+        $this->response->assertJsonFragment([
+            'name' => 'New title',
+            'place' => 'Place',
+            'max_participants' => 4,
+        ]);
+    }
+
+    public function testStationaryEventUpdateOnlyImage(): void
+    {
+        Storage::fake();
+
+        $this->response = $this->actingAs($this->user, 'api')
+            ->putJson('api/admin/stationary-events/' . $this->stationaryEvent->getKey(), [
+                'image' => UploadedFile::fake()->image('image.jpg')
+            ])->assertOk();
+
+        $this->assertApiResponse($this->stationaryEvent->toArray());
+        $data = $this->response->getData()->data;
+        Storage::exists($data->image_path);
+    }
+
+    public function testStationaryEventRemoveImage(): void
+    {
+        $this->response = $this->actingAs($this->user, 'api')
+            ->putJson('api/admin/stationary-events/' . $this->stationaryEvent->getKey(), [
+                'image_path' => '',
+            ])->assertOk();
+
+        $this->assertApiResponse($this->stationaryEvent->toArray());
+        $data = $this->response->getData()->data;
+        $this->assertNull($data->image_path);
+        $this->assertNull($data->image_url);
     }
 
     public function testStationaryEventUpdateAuthorMustByTutor(): void
@@ -136,10 +177,10 @@ class StationaryEventUpdateApiTest extends TestCase
         $this->response->assertJsonCount(2, 'data.categories');
         $this->response->assertJson(fn(AssertableJson $json) => $json->has(
             'data', fn($json) => $json->has(
-                'categories', fn(AssertableJson $json) => $json->each(
-                    fn(AssertableJson $json) => $json->where('id', fn($json) => in_array($json, $categories))->etc()
-                )->etc()
-            )->etc()
+            'categories', fn(AssertableJson $json) => $json->each(
+            fn(AssertableJson $json) => $json->where('id', fn($json) => in_array($json, $categories))->etc()
+        )->etc()
+        )->etc()
         )->etc());
     }
 

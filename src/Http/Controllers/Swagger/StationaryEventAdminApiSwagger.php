@@ -202,7 +202,7 @@ interface StationaryEventAdminApiSwagger
      *          required=true,
      *          @OA\MediaType(
      *              mediaType="application/json",
-     *              @OA\Schema(ref="#/components/schemas/stationary-event-create-request"),
+     *              @OA\Schema(ref="#/components/schemas/stationary-event-update-request"),
      *          ),
      *      ),
      *      @OA\Response(
