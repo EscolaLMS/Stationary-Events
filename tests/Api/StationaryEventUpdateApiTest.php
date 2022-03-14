@@ -31,7 +31,7 @@ class StationaryEventUpdateApiTest extends TestCase
 
     public function testStationaryEventUpdateUnauthorized(): void
     {
-        $this->putJson('api/admin/stationary-events/' . $this->stationaryEvent->getKey())
+        $this->postJson('api/admin/stationary-events/' . $this->stationaryEvent->getKey())
             ->assertUnauthorized();
     }
 
@@ -42,7 +42,7 @@ class StationaryEventUpdateApiTest extends TestCase
         $stationaryEvent = StationaryEvent::factory()->make()->toArray();
 
         $this->response = $this->actingAs($this->user, 'api')
-            ->putJson('api/admin/stationary-events/' . $this->stationaryEvent->getKey(),
+            ->postJson('api/admin/stationary-events/' . $this->stationaryEvent->getKey(),
                 array_merge($stationaryEvent, [
                     'image' => UploadedFile::fake()->image('image.jpg')
                 ])
@@ -62,7 +62,7 @@ class StationaryEventUpdateApiTest extends TestCase
         ]);
 
         $this->response = $this->actingAs($this->user, 'api')
-            ->putJson('api/admin/stationary-events/' . $stationaryEvent->getKey(), [
+            ->postJson('api/admin/stationary-events/' . $stationaryEvent->getKey(), [
                 'name' => 'New title',
             ])
             ->assertOk();
@@ -79,7 +79,7 @@ class StationaryEventUpdateApiTest extends TestCase
         Storage::fake();
 
         $this->response = $this->actingAs($this->user, 'api')
-            ->putJson('api/admin/stationary-events/' . $this->stationaryEvent->getKey(), [
+            ->postJson('api/admin/stationary-events/' . $this->stationaryEvent->getKey(), [
                 'image' => UploadedFile::fake()->image('image.jpg')
             ])->assertOk();
 
@@ -91,7 +91,7 @@ class StationaryEventUpdateApiTest extends TestCase
     public function testStationaryEventRemoveImage(): void
     {
         $this->response = $this->actingAs($this->user, 'api')
-            ->putJson('api/admin/stationary-events/' . $this->stationaryEvent->getKey(), [
+            ->postJson('api/admin/stationary-events/' . $this->stationaryEvent->getKey(), [
                 'image_path' => '',
             ])->assertOk();
 
@@ -107,10 +107,8 @@ class StationaryEventUpdateApiTest extends TestCase
         $student = $this->makeStudent();
         $stationaryEvent['authors'] = [$student->getKey()];
 
-        $response = $this->actingAs($this->user, 'api')->putJson(
-            'api/admin/stationary-events/' . $this->stationaryEvent->getKey(),
-            $stationaryEvent
-        );
+        $response = $this->actingAs($this->user, 'api')
+            ->postJson('api/admin/stationary-events/' . $this->stationaryEvent->getKey(), $stationaryEvent);
 
         $response->assertJsonValidationErrors(['authors.0']);
     }
@@ -121,7 +119,7 @@ class StationaryEventUpdateApiTest extends TestCase
         $this->stationaryEvent->delete();
 
         $this->response = $this->actingAs($this->user, 'api')
-            ->putJson('api/admin/stationary-events/' . $this->stationaryEvent->getKey(), $stationaryEvent)
+            ->postJson('api/admin/stationary-events/' . $this->stationaryEvent->getKey(), $stationaryEvent)
             ->assertNotFound();
     }
 
@@ -134,7 +132,7 @@ class StationaryEventUpdateApiTest extends TestCase
         $tutor = $this->makeInstructor();
         $stationaryEvent['authors'] = [$tutor->getKey()];
 
-        $this->response = $this->actingAs($this->user, 'api')->putJson(
+        $this->response = $this->actingAs($this->user, 'api')->postJson(
             'api/admin/stationary-events/' . $this->stationaryEvent->getKey(),
             $stationaryEvent
         )->assertOk();
@@ -161,7 +159,7 @@ class StationaryEventUpdateApiTest extends TestCase
         $stationaryEvent = StationaryEvent::factory()->make()->toArray();
         $stationaryEvent['categories'] = $categories;
 
-        $this->response = $this->actingAs($this->user, 'api')->putJson(
+        $this->response = $this->actingAs($this->user, 'api')->postJson(
             'api/admin/stationary-events/' . $this->stationaryEvent->getKey(),
             $stationaryEvent
         )->assertOk();
@@ -177,10 +175,10 @@ class StationaryEventUpdateApiTest extends TestCase
         $this->response->assertJsonCount(2, 'data.categories');
         $this->response->assertJson(fn(AssertableJson $json) => $json->has(
             'data', fn($json) => $json->has(
-            'categories', fn(AssertableJson $json) => $json->each(
-            fn(AssertableJson $json) => $json->where('id', fn($json) => in_array($json, $categories))->etc()
-        )->etc()
-        )->etc()
+                'categories', fn(AssertableJson $json) => $json->each(
+                    fn(AssertableJson $json) => $json->where('id', fn($json) => in_array($json, $categories))->etc()
+                )->etc()
+            )->etc()
         )->etc());
     }
 
@@ -191,7 +189,7 @@ class StationaryEventUpdateApiTest extends TestCase
 
         $this->assertCount(1, $this->stationaryEvent->categories);
 
-        $this->response = $this->actingAs($this->user, 'api')->putJson(
+        $this->response = $this->actingAs($this->user, 'api')->postJson(
             'api/admin/stationary-events/' . $this->stationaryEvent->getKey(),
             $stationaryEvent
         )->assertOk();

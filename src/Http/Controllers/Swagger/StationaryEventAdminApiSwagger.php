@@ -181,7 +181,7 @@ interface StationaryEventAdminApiSwagger
     public function show(ReadStationaryEventRequest $request): JsonResponse;
 
     /**
-     * @OA\Put(
+     * @OA\Post(
      *      path="/api/admin/stationary-events/{id}",
      *      summary="Update the specified Stationary Event in storage",
      *      tags={"Admin Stationary Events"},
