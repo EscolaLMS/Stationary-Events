@@ -2,14 +2,17 @@
 
 namespace EscolaLms\StationaryEvents\Http\Resources;
 
+use EscolaLms\Auth\Traits\ResourceExtandable;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
 
 class StationaryEventResource extends JsonResource
 {
+    use ResourceExtandable;
+
     public function toArray($request): array
     {
-        return [
+        $fields =  [
             'id' => $this->id,
             'name' => $this->name,
             'description' => $this->description,
@@ -23,5 +26,7 @@ class StationaryEventResource extends JsonResource
             'image_path' => $this->image_path,
             'image_url' => $this->image_path ? Storage::url($this->image_path) : null,
         ];
+
+        return self::apply($fields, $this);
     }
 }
