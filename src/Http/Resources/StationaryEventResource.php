@@ -16,6 +16,7 @@ class StationaryEventResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'description' => $this->description,
+            'short_desc' => $this->short_desc,
             'started_at' => $this->started_at,
             'finished_at' => $this->finished_at,
             'max_participants' => $this->max_participants,

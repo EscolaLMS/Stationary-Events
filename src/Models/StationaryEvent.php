@@ -29,6 +29,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  *          type="string"
  *      ),
  *      @OA\Property(
+ *          property="short_desc",
+ *          description="short description",
+ *          type="string"
+ *      ),
+ *      @OA\Property(
  *          property="started_at",
  *          description="started_at",
  *          type="datetime"
@@ -78,6 +83,7 @@ class StationaryEvent extends Model
     protected $fillable = [
         'name',
         'description',
+        'short_desc',
         'started_at',
         'finished_at',
         'max_participants',

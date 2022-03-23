@@ -21,6 +21,11 @@ use Illuminate\Support\Facades\Gate;
  *          type="string"
  *      ),
  *      @OA\Property(
+ *          property="short_desc",
+ *          description="short description",
+ *          type="string"
+ *      ),
+ *      @OA\Property(
  *          property="started_at",
  *          description="started_at",
  *          type="datetime"
@@ -86,6 +91,7 @@ class UpdateStationaryEventRequest extends FormRequest
         return [
             'name' => ['nullable', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
+            'short_desc' => ['nullable', 'string', 'min:3'],
             'started_at' => ['nullable', 'date', 'after:now'],
             'finished_at' => ['nullable', 'date', 'after:started_at'],
             'base_price' => ['nullable', 'integer', 'min:0'],
