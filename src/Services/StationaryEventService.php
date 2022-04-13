@@ -5,8 +5,11 @@ namespace EscolaLms\StationaryEvents\Services;
 use EscolaLms\Auth\Models\User;
 use EscolaLms\Core\Dtos\OrderDto;
 use EscolaLms\Core\Repositories\Criteria\Primitives\DateCriterion;
+use EscolaLms\Core\Repositories\Criteria\Primitives\EqualCriterion;
+use EscolaLms\Core\Repositories\Criteria\Primitives\InCriterion;
 use EscolaLms\Core\Repositories\Criteria\Primitives\LikeCriterion;
 use EscolaLms\Courses\Repositories\Criteria\Primitives\OrderCriterion;
+use EscolaLms\StationaryEvents\Enum\StationaryEventStatusEnum;
 use EscolaLms\StationaryEvents\Events\StationaryEventAssigned;
 use EscolaLms\StationaryEvents\Events\StationaryEventAuthorAssigned;
 use EscolaLms\StationaryEvents\Events\StationaryEventAuthorUnassigned;
@@ -39,8 +42,14 @@ class StationaryEventService implements StationaryEventServiceContract
             unset($search['name']);
         }
 
+        if (isset($search['status'])) {
+            $criteria[] = new EqualCriterion('status', $search['status']);
+            unset($search['status']);
+        }
+
         if ($onlyActive) {
             $criteria[] = new DateCriterion('started_at', now()->format('Y-m-d H:i:s'), '>=');
+            $criteria[] = new InCriterion('status', [StationaryEventStatusEnum::PUBLISHED_UNACTIVATED, StationaryEventStatusEnum::PUBLISHED]);
         }
 
         return $this->stationaryEventRepository->allQueryBuilder(

@@ -4,6 +4,7 @@ namespace EscolaLms\StationaryEvents\Tests\Api;
 
 use EscolaLms\Core\Tests\CreatesUsers;
 use EscolaLms\StationaryEvents\Database\Seeders\StationaryEventPermissionSeeder;
+use EscolaLms\StationaryEvents\Enum\StationaryEventStatusEnum;
 use EscolaLms\StationaryEvents\Models\StationaryEvent;
 use EscolaLms\StationaryEvents\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -17,7 +18,9 @@ class StationaryEventShowApiTest extends TestCase
         parent::setUp();
         $this->seed(StationaryEventPermissionSeeder::class);
         $this->user = $this->makeInstructor();
-        $this->stationaryEvent = StationaryEvent::factory()->create();
+        $this->stationaryEvent = StationaryEvent::factory()->create([
+            'status' => StationaryEventStatusEnum::PUBLISHED
+        ]);
         $this->stationaryEvent->authors()->sync($this->user->getKey());
     }
 
@@ -70,5 +73,19 @@ class StationaryEventShowApiTest extends TestCase
         $this->response->assertJsonMissing([
             'users' => []
         ]);
+    }
+
+    public function testStationaryEventUnpublished(): void
+    {
+        $stationaryEvent = StationaryEvent::factory()->create([
+            'status' => StationaryEventStatusEnum::DRAFT
+        ]);
+
+        $this->response = $this->getJson('api/stationary-events/' . $stationaryEvent->getKey())
+            ->assertStatus(400)
+            ->assertJsonFragment([
+                'success' => false,
+                'message' => __('Stationary events is unpublished'),
+            ]);
     }
 }

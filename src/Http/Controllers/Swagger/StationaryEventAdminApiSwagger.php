@@ -67,6 +67,15 @@ interface StationaryEventAdminApiSwagger
      *              type="string",
      *          ),
      *      ),
+     *      @OA\Parameter(
+     *          name="status",
+     *          required=false,
+     *          in="query",
+     *          @OA\Schema(
+     *              type="string",
+     *              enum={"draft", "archived", "published", "published_unactivated"}
+     *          ),
+     *      ),
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
