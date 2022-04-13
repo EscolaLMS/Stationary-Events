@@ -5,6 +5,7 @@ namespace EscolaLms\StationaryEvents\Models;
 use EscolaLms\Auth\Models\User;
 use EscolaLms\Categories\Models\Category;
 use EscolaLms\StationaryEvents\Database\Factories\StationaryEventFactory;
+use EscolaLms\StationaryEvents\Enum\StationaryEventStatusEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -73,6 +74,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  *          description="updated_at",
  *          type="datetime",
  *      ),
+ *      @OA\Property(
+ *          property="status",
+ *          description="status",
+ *          type="string"
+ *      ),
  * )
  *
  */
@@ -90,6 +96,7 @@ class StationaryEvent extends Model
         'place',
         'program',
         'image_path',
+        'status',
     ];
 
     public function users(): BelongsToMany
@@ -105,6 +112,14 @@ class StationaryEvent extends Model
     public function categories(): BelongsToMany
     {
         return $this->belongsToMany(Category::class);
+    }
+
+    public function isPublished(): bool
+    {
+        return in_array($this->status, [
+            StationaryEventStatusEnum::PUBLISHED_UNACTIVATED,
+            StationaryEventStatusEnum::PUBLISHED
+        ]);
     }
 
     protected static function newFactory(): StationaryEventFactory

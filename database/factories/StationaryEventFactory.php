@@ -2,6 +2,7 @@
 
 namespace EscolaLms\StationaryEvents\Database\Factories;
 
+use EscolaLms\StationaryEvents\Enum\StationaryEventStatusEnum;
 use EscolaLms\StationaryEvents\Models\StationaryEvent;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -15,6 +16,7 @@ class StationaryEventFactory extends Factory
 
         return [
             'name' => $this->faker->sentence(10),
+            'status' => $this->faker->randomElement(StationaryEventStatusEnum::getValues()),
             'description' => $this->faker->sentence,
             'started_at' => $startDate->format('Y-m-d H:i:s'),
             'finished_at' => (clone $startDate)->modify('+' . random_int(1, 5) . ' hour')->format('Y-m-d H:i:s'),

@@ -33,7 +33,7 @@ class StationaryEventCreateApiTest extends TestCase
     public function testStationaryEventCreateRequiredValidation(): void
     {
         $response = $this->actingAs($this->user, 'api')->postJson('api/admin/stationary-events');
-        $response->assertJsonValidationErrors(['name', 'started_at', 'finished_at', 'description']);
+        $response->assertJsonValidationErrors(['name', 'started_at', 'status', 'finished_at', 'description']);
     }
 
     public function testStationaryEventCreateAuthorMustByTutor(): void
@@ -122,6 +122,7 @@ class StationaryEventCreateApiTest extends TestCase
 
         $this->response->assertJsonFragment([
             'name' => $stationaryEvent['name'],
+            'status' => $stationaryEvent['status'],
             'description' => $stationaryEvent['description'],
             'started_at' => $stationaryEvent['started_at'],
             'finished_at' => $stationaryEvent['finished_at'],

@@ -13,3 +13,4 @@ providers:
   - EscolaLms\Core\EscolaLmsServiceProvider
   - EscolaLms\Auth\EscolaLmsAuthServiceProvider
   - EscolaLms\StationaryEvents\EscolaLmsStationaryEventsServiceProvider
+  - EscolaLms\Categories\EscolaLmsCategoriesServiceProvider

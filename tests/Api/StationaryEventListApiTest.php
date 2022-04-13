@@ -4,6 +4,7 @@ namespace EscolaLms\StationaryEvents\Tests\Api;
 
 use EscolaLms\Core\Tests\CreatesUsers;
 use EscolaLms\StationaryEvents\Database\Seeders\StationaryEventPermissionSeeder;
+use EscolaLms\StationaryEvents\Enum\StationaryEventStatusEnum;
 use EscolaLms\StationaryEvents\Models\StationaryEvent;
 use EscolaLms\StationaryEvents\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -24,7 +25,7 @@ class StationaryEventListApiTest extends TestCase
         $this->getJson('api/admin/stationary-events')->assertUnauthorized();
     }
 
-    public function testStationaryEventsListWithFilter(): void
+    public function testStationaryEventsAdminListWithFilter(): void
     {
         $stationaryEvent = StationaryEvent::factory()->create();
         $student = $this->makeStudent();
@@ -60,12 +61,26 @@ class StationaryEventListApiTest extends TestCase
                 ],
             ]
         ]);
+
+        $this->response = $this->actingAs($this->user, 'api')
+            ->getJson('api/admin/stationary-events?status=' . $stationaryEvent->status)
+            ->assertOk()
+            ->assertJsonFragment([
+                'id' => $stationaryEvent->getKey(),
+                'name' => $stationaryEvent->name,
+            ]);
     }
 
     public function testStationaryEventsPublicListWithFilter(): void
     {
-        $stationaryEvent = StationaryEvent::factory()->create();
-        $stationaryEvent2 = StationaryEvent::factory(['started_at' => now()->modify('-1 days')])->create();
+        $stationaryEvent = StationaryEvent::factory()->create([
+            'status' => StationaryEventStatusEnum::PUBLISHED
+        ]);
+
+        $stationaryEvent2 = StationaryEvent::factory([
+            'started_at' => now()->modify('-1 days'),
+            'status' => StationaryEventStatusEnum::PUBLISHED
+        ])->create();
 
         $student = $this->makeStudent();
         $stationaryEvent->users()->sync($student);

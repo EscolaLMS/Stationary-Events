@@ -38,6 +38,11 @@ class StationaryEventApiController extends EscolaLmsBaseController implements St
 
     public function show(ReadStationaryEventPublicRequest $request): JsonResponse
     {
-        return $this->sendResponseForResource(StationaryEventResource::make($request->getStationaryEvent()));
+        $stationaryEvent = $request->getStationaryEvent();
+        if (!$stationaryEvent->isPublished()) {
+            return $this->sendError(__('Stationary events is unpublished'), 400);
+        }
+
+        return $this->sendResponseForResource(StationaryEventResource::make($stationaryEvent));
     }
 }

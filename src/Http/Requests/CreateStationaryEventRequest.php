@@ -2,18 +2,25 @@
 
 namespace EscolaLms\StationaryEvents\Http\Requests;
 
+use EscolaLms\StationaryEvents\Enum\StationaryEventStatusEnum;
 use EscolaLms\StationaryEvents\Models\StationaryEvent;
 use EscolaLms\StationaryEvents\Rules\ValidAuthor;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
 
 /**
  * @OA\Schema(
  *      schema="stationary-event-create-request",
- *      required={"name", "description", "started_at", "finished_at"},
+ *      required={"name", "status", "description", "started_at", "finished_at"},
  *      @OA\Property(
  *          property="name",
  *          description="name",
+ *          type="string"
+ *      ),
+ *      @OA\Property(
+ *          property="status",
+ *          description="status",
  *          type="string"
  *      ),
  *      @OA\Property(
@@ -86,6 +93,7 @@ class CreateStationaryEventRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
+            'status' => ['required', 'string', Rule::in(StationaryEventStatusEnum::getValues())],
             'description' => ['required', 'string'],
             'short_desc' => ['nullable', 'string', 'min:3'],
             'started_at' => ['required', 'date', 'after:now'],
