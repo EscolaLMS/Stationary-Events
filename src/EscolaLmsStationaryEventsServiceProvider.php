@@ -2,6 +2,7 @@
 
 namespace EscolaLms\StationaryEvents;
 
+use EscolaLms\Categories\EscolaLmsCategoriesServiceProvider;
 use EscolaLms\StationaryEvents\Providers\AuthServiceProvider;
 use EscolaLms\StationaryEvents\Repositories\Contracts\StationaryEventRepositoryContract;
 use EscolaLms\StationaryEvents\Repositories\StationaryEventRepository;
@@ -33,5 +34,6 @@ class EscolaLmsStationaryEventsServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->register(AuthServiceProvider::class);
+        $this->app->register(EscolaLmsCategoriesServiceProvider::class);
     }
 }
