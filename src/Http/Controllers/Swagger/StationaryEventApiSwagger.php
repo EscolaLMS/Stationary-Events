@@ -11,9 +11,9 @@ interface StationaryEventApiSwagger
     /**
      * @OA\Get(
      *      path="/api/stationary-events",
-     *      summary="Get a listing of the active Stationary events",
+     *      summary="Get a listing of published stationary events",
      *      tags={"Stationary Events"},
-     *      description="Get all active Stationary Events",
+     *      description="Get all stationary events with published or published_unactivated status",
      *      @OA\Parameter(
      *          name="order_by",
      *          required=false,
@@ -91,9 +91,9 @@ interface StationaryEventApiSwagger
     /**
      * @OA\Get(
      *      path="/api/stationary-events/{id}",
-     *      summary="Display the specified Stationary Event",
+     *      summary="Display the specified Stationary Event.",
      *      tags={"Stationary Events"},
-     *      description="Get Stationary Event",
+     *      description="Get stationary event by id with published or published_unactivated status",
      *      @OA\Parameter(
      *          name="id",
      *          description="id of Stationary event",
