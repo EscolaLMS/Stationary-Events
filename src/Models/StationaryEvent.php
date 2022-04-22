@@ -6,6 +6,7 @@ use EscolaLms\Auth\Models\User;
 use EscolaLms\Categories\Models\Category;
 use EscolaLms\StationaryEvents\Database\Factories\StationaryEventFactory;
 use EscolaLms\StationaryEvents\Enum\StationaryEventStatusEnum;
+use EscolaLms\StationaryEvents\Events\ImageChanged;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -125,5 +126,14 @@ class StationaryEvent extends Model
     protected static function newFactory(): StationaryEventFactory
     {
         return StationaryEventFactory::new();
+    }
+
+    protected static function booted()
+    {
+        self::updated(function (StationaryEvent $stationaryEvent) {
+            if ($stationaryEvent->wasChanged('image_path') && is_string($stationaryEvent->getOriginal('image_path'))) {
+                event(new ImageChanged($stationaryEvent->getOriginal('image_path')));
+            }
+        });
     }
 }

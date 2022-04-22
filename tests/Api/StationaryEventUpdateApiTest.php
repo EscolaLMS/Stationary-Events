@@ -5,6 +5,7 @@ namespace EscolaLms\StationaryEvents\Tests\Api;
 use EscolaLms\Categories\Models\Category;
 use EscolaLms\Core\Tests\CreatesUsers;
 use EscolaLms\StationaryEvents\Database\Seeders\StationaryEventPermissionSeeder;
+use EscolaLms\StationaryEvents\Events\ImageChanged;
 use EscolaLms\StationaryEvents\Events\StationaryEventAuthorAssigned;
 use EscolaLms\StationaryEvents\Events\StationaryEventAuthorUnassigned;
 use EscolaLms\StationaryEvents\Models\StationaryEvent;
@@ -77,15 +78,25 @@ class StationaryEventUpdateApiTest extends TestCase
     public function testStationaryEventUpdateOnlyImage(): void
     {
         Storage::fake();
+        Event::fake([ImageChanged::class]);
+
+        $image = UploadedFile::fake()->image('image.jpg');
+        $this->stationaryEvent = StationaryEvent::factory()->create([
+            'image_path' => $image->storeAs('/', 'image.jpg'),
+        ]);
 
         $this->response = $this->actingAs($this->user, 'api')
             ->putJson('api/admin/stationary-events/' . $this->stationaryEvent->getKey(), [
-                'image' => UploadedFile::fake()->image('image.jpg')
+                'image' => $image
             ])->assertOk();
 
-        $this->assertApiResponse($this->stationaryEvent->toArray());
-        $data = $this->response->getData()->data;
-        Storage::exists($data->image_path);
+       $data = $this->response->getData()->data;
+       Storage::exists($data->image_path);
+
+       Event::assertDispatched(function (ImageChanged $imageChanged) {
+           $this->assertEquals('image.jpg', $imageChanged->getPath());
+           return true;
+       });
     }
 
     public function testStationaryEventRemoveImage(): void
