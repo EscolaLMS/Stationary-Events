@@ -13,6 +13,11 @@ Route::group(['middleware' => ['auth:api'], 'prefix' => 'api/admin/stationary-ev
     Route::delete('{id}', [StationaryEventAdminApiController::class, 'delete']);
 });
 
+// user endpoint
+Route::group(['middleware' => ['auth:api'], 'prefix' => 'api/stationary-events'], function () {
+    Route::get('/me', [StationaryEventApiController::class, 'forCurrentUser']);
+});
+
 // public routes
 Route::group(['prefix' => 'api/stationary-events'], function () {
     Route::get(null, [StationaryEventApiController::class, 'index']);

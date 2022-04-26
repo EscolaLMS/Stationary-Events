@@ -6,6 +6,7 @@ use EscolaLms\Core\Dtos\OrderDto;
 use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
 use EscolaLms\StationaryEvents\Enum\ConstantEnum;
 use EscolaLms\StationaryEvents\Http\Controllers\Swagger\StationaryEventApiSwagger;
+use EscolaLms\StationaryEvents\Http\Requests\ListStationaryEventCurrentUserRequest;
 use EscolaLms\StationaryEvents\Http\Requests\ReadStationaryEventPublicRequest;
 use EscolaLms\StationaryEvents\Http\Resources\StationaryEventResource;
 use EscolaLms\StationaryEvents\Services\Contracts\StationaryEventServiceContract;
@@ -28,6 +29,21 @@ class StationaryEventApiController extends EscolaLmsBaseController implements St
 
         $stationaryEvents = $this->stationaryEventService
             ->getStationaryEventList($orderDto, $search, true)
+            ->paginate($request->get('per_page') ?? ConstantEnum::PER_PAGE);
+
+        return $this->sendResponseForResource(
+            StationaryEventResource::collection($stationaryEvents),
+            __('Stationary events retrieved successfully')
+        );
+    }
+
+    public function forCurrentUser(ListStationaryEventCurrentUserRequest $request): JsonResponse
+    {
+        $search = $request->except(['limit', 'skip', 'order', 'order_by']);
+        $orderDto = OrderDto::instantiateFromRequest($request);
+
+        $stationaryEvents = $this->stationaryEventService
+            ->getStationaryEventListForCurrentUser($orderDto, $search)
             ->paginate($request->get('per_page') ?? ConstantEnum::PER_PAGE);
 
         return $this->sendResponseForResource(
