@@ -6,7 +6,7 @@ use EscolaLms\Core\Dtos\OrderDto;
 use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
 use EscolaLms\StationaryEvents\Enum\ConstantEnum;
 use EscolaLms\StationaryEvents\Http\Controllers\Swagger\StationaryEventApiSwagger;
-use EscolaLms\StationaryEvents\Http\Requests\ListStationaryEventCurrentUserRequest;
+use EscolaLms\StationaryEvents\Http\Requests\ListStationaryEventForCurrentUserRequest;
 use EscolaLms\StationaryEvents\Http\Requests\ReadStationaryEventPublicRequest;
 use EscolaLms\StationaryEvents\Http\Resources\StationaryEventResource;
 use EscolaLms\StationaryEvents\Services\Contracts\StationaryEventServiceContract;
@@ -37,7 +37,7 @@ class StationaryEventApiController extends EscolaLmsBaseController implements St
         );
     }
 
-    public function forCurrentUser(ListStationaryEventCurrentUserRequest $request): JsonResponse
+    public function forCurrentUser(ListStationaryEventForCurrentUserRequest $request): JsonResponse
     {
         $search = $request->except(['limit', 'skip', 'order', 'order_by']);
         $orderDto = OrderDto::instantiateFromRequest($request);

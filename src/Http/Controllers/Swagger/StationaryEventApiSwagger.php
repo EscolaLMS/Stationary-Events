@@ -2,7 +2,7 @@
 
 namespace EscolaLms\StationaryEvents\Http\Controllers\Swagger;
 
-use EscolaLms\StationaryEvents\Http\Requests\ListStationaryEventCurrentUserRequest;
+use EscolaLms\StationaryEvents\Http\Requests\ListStationaryEventForCurrentUserRequest;
 use EscolaLms\StationaryEvents\Http\Requests\ListStationaryEventRequest;
 use EscolaLms\StationaryEvents\Http\Requests\ReadStationaryEventPublicRequest;
 use Illuminate\Http\JsonResponse;
@@ -167,7 +167,7 @@ interface StationaryEventApiSwagger
      *      )
      * )
      */
-    public function forCurrentUser(ListStationaryEventCurrentUserRequest $request): JsonResponse;
+    public function forCurrentUser(ListStationaryEventForCurrentUserRequest $request): JsonResponse;
 
     /**
      * @OA\Get(
