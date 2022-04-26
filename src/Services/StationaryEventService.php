@@ -31,31 +31,25 @@ class StationaryEventService implements StationaryEventServiceContract
 
     public function getStationaryEventList(OrderDto $orderDto, array $search = [], bool $onlyActive = false): Builder
     {
-        $criteria = [];
-
-        if (!is_null($orderDto->getOrder())) {
-            $criteria[] = new OrderCriterion($orderDto->getOrderBy(), $orderDto->getOrder());
-        }
-
-        if (isset($search['name'])) {
-            $criteria[] = new LikeCriterion('name', $search['name']);
-            unset($search['name']);
-        }
-
-        if (isset($search['status'])) {
-            $criteria[] = new EqualCriterion('status', $search['status']);
-            unset($search['status']);
-        }
+        $criteria = $this->prepareListCriteria($orderDto, $search);
 
         if ($onlyActive) {
             $criteria[] = new DateCriterion('started_at', now()->format('Y-m-d H:i:s'), '>=');
             $criteria[] = new InCriterion('status', [StationaryEventStatusEnum::PUBLISHED_UNACTIVATED, StationaryEventStatusEnum::PUBLISHED]);
         }
 
-        return $this->stationaryEventRepository->allQueryBuilder(
-            $search,
-            $criteria
-        )->with(['authors']);
+        return $this->stationaryEventRepository
+            ->allQueryBuilder($criteria)
+            ->with(['authors']);
+    }
+
+    public function getStationaryEventListForCurrentUser(OrderDto $orderDto, array $search = []): Builder
+    {
+        $criteria = $this->prepareListCriteria($orderDto, $search);
+
+        return $this->stationaryEventRepository
+            ->forCurrentUser($criteria)
+            ->with('authors');
     }
 
     public function create(array $data): StationaryEvent
@@ -134,5 +128,24 @@ class StationaryEventService implements StationaryEventServiceContract
     private function saveImage(UploadedFile $image, int $stationaryEventId): string
     {
         return $image->storePublicly("stationary-events/{$stationaryEventId}/images");
+    }
+
+    private function prepareListCriteria(OrderDto $orderDto, array $search = []): array
+    {
+        $criteria = [];
+
+        if (!is_null($orderDto->getOrder())) {
+            $criteria[] = new OrderCriterion($orderDto->getOrderBy(), $orderDto->getOrder());
+        }
+
+        if (isset($search['name'])) {
+            $criteria[] = new LikeCriterion('name', $search['name']);
+        }
+
+        if (isset($search['status'])) {
+            $criteria[] = new EqualCriterion('status', $search['status']);
+        }
+
+        return $criteria;
     }
 }

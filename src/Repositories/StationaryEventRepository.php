@@ -23,14 +23,21 @@ class StationaryEventRepository extends BaseRepository implements StationaryEven
         return StationaryEvent::class;
     }
 
-    public function allQueryBuilder(array $search = [], array $criteria = []): Builder
+    public function allQueryBuilder(array $criteria = []): Builder
     {
-        $query = $this->allQuery($search);
+        $query = $this->allQuery();
 
         if (!empty($criteria)) {
             $query = $this->applyCriteria($query, $criteria);
         }
 
         return $query;
+    }
+
+    public function forCurrentUser(array $criteria = []): Builder
+    {
+        return $this->allQueryBuilder($criteria)
+            ->WhereRelation('users', 'user_id', '=', auth()->user()->getKey())
+            ->orWhereRelation('authors', 'author_id', '=', auth()->user()->getKey());
     }
 }

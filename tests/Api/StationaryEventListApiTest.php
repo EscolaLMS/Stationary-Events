@@ -8,6 +8,7 @@ use EscolaLms\StationaryEvents\Enum\StationaryEventStatusEnum;
 use EscolaLms\StationaryEvents\Models\StationaryEvent;
 use EscolaLms\StationaryEvents\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Testing\Fluent\AssertableJson;
 
 class StationaryEventListApiTest extends TestCase
 {
@@ -117,6 +118,28 @@ class StationaryEventListApiTest extends TestCase
                         'path_avatar' => $student->path_avatar,
                     ],
                 ]
+            ]);
+    }
+
+    public function testStationaryEventsListForCurrentUser(): void
+    {
+        $student = $this->makeStudent();
+        $stationaryEvent = StationaryEvent::factory()->create();
+        $stationaryEvent->users()->sync($student->getKey());
+
+        $stationaryEvent2 = StationaryEvent::factory()->create();
+        $stationaryEvent2->users()->sync($student->getKey());
+
+        $this->response = $this->actingAs($student, 'api')->getJson('api/stationary-events/me')
+            ->assertOk()
+            ->assertJsonCount(2, 'data');
+
+        $this->response = $this->actingAs($student, 'api')->getJson('api/stationary-events/me?name=' . $stationaryEvent->name)
+            ->assertOk()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonFragment([
+                'id' => $stationaryEvent->getKey(),
+                'name' => $stationaryEvent->name,
             ]);
     }
 }
