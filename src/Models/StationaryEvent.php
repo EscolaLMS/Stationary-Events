@@ -2,6 +2,7 @@
 
 namespace EscolaLms\StationaryEvents\Models;
 
+use Carbon\Carbon;
 use EscolaLms\Auth\Models\User;
 use EscolaLms\Categories\Models\Category;
 use EscolaLms\StationaryEvents\Database\Factories\StationaryEventFactory;
@@ -120,6 +121,24 @@ class StationaryEvent extends Model
             StationaryEventStatusEnum::PUBLISHED_UNACTIVATED,
             StationaryEventStatusEnum::PUBLISHED
         ]);
+    }
+
+    public function getInComingAttribute(): bool
+    {
+        return $this->started_at && Carbon::make($this->started_at)->getTimestamp() >= now()->getTimestamp();
+    }
+
+    public function getIsEndedAttribute(): bool
+    {
+        return $this->finished_at && Carbon::make($this->finished_at)->getTimestamp() < now()->getTimestamp();
+    }
+
+    public function getIsStartedAttribute(): bool
+    {
+        return $this->started_at &&
+            $this->finished_at &&
+            Carbon::make($this->started_at)->getTimestamp() <= now()->getTimestamp() &&
+            Carbon::make($this->finished_at)->getTimestamp() > now()->getTimestamp();
     }
 
     protected static function newFactory(): StationaryEventFactory

@@ -2,6 +2,7 @@
 
 namespace EscolaLms\StationaryEvents\Tests\Api;
 
+use Carbon\Carbon;
 use EscolaLms\Core\Tests\CreatesUsers;
 use EscolaLms\StationaryEvents\Database\Seeders\StationaryEventPermissionSeeder;
 use EscolaLms\StationaryEvents\Enum\StationaryEventStatusEnum;
@@ -86,6 +87,58 @@ class StationaryEventShowApiTest extends TestCase
             ->assertJsonFragment([
                 'success' => false,
                 'message' => __('Stationary events is unpublished'),
+            ]);
+    }
+
+
+    public function testStationaryEventIsComing(): void
+    {
+        $stationaryEvent = StationaryEvent::factory()->create([
+            'started_at' => Carbon::now()->addDay(),
+            'finished_at' => Carbon::now()->addDay()->addHour(),
+        ]);
+
+        $this->response = $this->actingAs($this->user, 'api')
+            ->getJson('api/admin/stationary-events/' . $stationaryEvent->getKey())
+            ->assertOk()
+            ->assertJsonFragment([
+                'in_coming' => true,
+                'is_ended' => false,
+                'is_started' => false,
+            ]);
+    }
+
+    public function testStationaryEventIsEnded(): void
+    {
+        $stationaryEvent = StationaryEvent::factory()->create([
+            'started_at' => Carbon::now()->subDay()->subHour(),
+            'finished_at' => Carbon::now()->subDay(),
+        ]);
+
+        $this->response = $this->actingAs($this->user, 'api')
+            ->getJson('api/admin/stationary-events/' . $stationaryEvent->getKey())
+            ->assertOk()
+            ->assertJsonFragment([
+                'in_coming' => false,
+                'is_ended' => true,
+                'is_started' => false,
+            ]);
+    }
+
+    public function testStationaryEventIsStarted(): void
+    {
+        $stationaryEvent = StationaryEvent::factory()->create([
+            'started_at' => Carbon::now()->subHour(),
+            'finished_at' => Carbon::now()->addHour(),
+        ]);
+
+        $this->response = $this->actingAs($this->user, 'api')
+            ->getJson('api/admin/stationary-events/' . $stationaryEvent->getKey())
+            ->assertOk()
+            ->assertJsonFragment([
+                'in_coming' => false,
+                'is_ended' => false,
+                'is_started' => true,
             ]);
     }
 }

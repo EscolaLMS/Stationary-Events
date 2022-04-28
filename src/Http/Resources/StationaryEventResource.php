@@ -29,6 +29,9 @@ class StationaryEventResource extends JsonResource
             'authors' => $this->authors ? UserResource::collection($this->authors) : [],
             'image_path' => $this->image_path,
             'image_url' => $this->image_path ? Storage::url($this->image_path) : null,
+            'in_coming' => $this->in_coming,
+            'is_ended' => $this->is_ended,
+            'is_started' => $this->is_started,
         ];
 
         return self::apply($fields, $this);
