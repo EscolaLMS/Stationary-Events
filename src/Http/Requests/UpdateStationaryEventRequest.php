@@ -115,6 +115,7 @@ class UpdateStationaryEventRequest extends FormRequest
             'categories' => ['array'],
             'categories.*' => ['integer', 'exists:categories,id'],
             'image' => [new FileOrStringRule(['image'], $prefixPath)],
+            'image_path' => ['nullable', 'string', 'max:255'],
         ];
     }
 
