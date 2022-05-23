@@ -5,6 +5,7 @@ namespace EscolaLms\StationaryEvents\Tests\Api;
 use EscolaLms\Categories\Models\Category;
 use EscolaLms\Core\Tests\CreatesUsers;
 use EscolaLms\StationaryEvents\Database\Seeders\StationaryEventPermissionSeeder;
+use EscolaLms\StationaryEvents\Enum\ConstantEnum;
 use EscolaLms\StationaryEvents\Events\StationaryEventAuthorAssigned;
 use EscolaLms\StationaryEvents\Events\StationaryEventAuthorUnassigned;
 use EscolaLms\StationaryEvents\Models\StationaryEvent;
@@ -197,5 +198,21 @@ class StationaryEventUpdateApiTest extends TestCase
         )->assertOk();
 
         $this->response->assertJsonCount(0, 'data.categories');
+    }
+
+    public function testUpdateStationaryEventImageFromReusableFile(): void
+    {
+        Storage::fake();
+        $directoryPath = ConstantEnum::DIRECTORY . "/{$this->stationaryEvent->getKey()}/images";
+        UploadedFile::fake()->image('image.jpg')->storeAs($directoryPath, 'image.jpg');
+        $imagePath = "{$directoryPath}/image.jpg";
+
+        $this->response = $this->actingAs($this->user, 'api')
+            ->putJson('api/admin/stationary-events/' . $this->stationaryEvent->getKey(), [
+                'image' => $imagePath,
+            ])->assertOk();
+
+        $data = $this->response->getData()->data;
+        Storage::assertExists($data->image_path);
     }
 }
