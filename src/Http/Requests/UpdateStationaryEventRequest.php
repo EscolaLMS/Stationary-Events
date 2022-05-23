@@ -2,6 +2,8 @@
 
 namespace EscolaLms\StationaryEvents\Http\Requests;
 
+use EscolaLms\Files\Rules\FileOrStringRule;
+use EscolaLms\StationaryEvents\Enum\ConstantEnum;
 use EscolaLms\StationaryEvents\Enum\StationaryEventStatusEnum;
 use EscolaLms\StationaryEvents\Models\StationaryEvent;
 use EscolaLms\StationaryEvents\Rules\ValidAuthor;
@@ -95,6 +97,8 @@ class UpdateStationaryEventRequest extends FormRequest
 
     public function rules(): array
     {
+        $prefixPath = ConstantEnum::DIRECTORY . '/' . $this->route('id');
+
         return [
             'name' => ['nullable', 'string', 'max:255'],
             'status' => ['string', Rule::in(StationaryEventStatusEnum::getValues())],
@@ -110,8 +114,7 @@ class UpdateStationaryEventRequest extends FormRequest
             'authors.*' => ['integer', new ValidAuthor()],
             'categories' => ['array'],
             'categories.*' => ['integer', 'exists:categories,id'],
-            'image' => ['nullable', 'file', 'image'],
-            'image_path' => ['nullable', 'string', 'max:255'],
+            'image' => [new FileOrStringRule(['image'], $prefixPath)],
         ];
     }
 

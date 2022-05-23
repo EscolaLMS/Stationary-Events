@@ -9,6 +9,8 @@ use EscolaLms\Core\Repositories\Criteria\Primitives\EqualCriterion;
 use EscolaLms\Core\Repositories\Criteria\Primitives\InCriterion;
 use EscolaLms\Core\Repositories\Criteria\Primitives\LikeCriterion;
 use EscolaLms\Courses\Repositories\Criteria\Primitives\OrderCriterion;
+use EscolaLms\Files\Helpers\FileHelper;
+use EscolaLms\StationaryEvents\Enum\ConstantEnum;
 use EscolaLms\StationaryEvents\Enum\StationaryEventStatusEnum;
 use EscolaLms\StationaryEvents\Events\StationaryEventAssigned;
 use EscolaLms\StationaryEvents\Events\StationaryEventAuthorAssigned;
@@ -62,7 +64,7 @@ class StationaryEventService implements StationaryEventServiceContract
         }
 
         if (isset($data['image'])) {
-            $stationaryEvent->image_path = $this->saveImage($data['image'], $stationaryEvent->getKey());
+            $stationaryEvent->image_path = FileHelper::getFilePath($data['image'], ConstantEnum::DIRECTORY . '/' . $stationaryEvent->getKey() . '/images');
             $stationaryEvent->save();
         }
 
@@ -72,7 +74,7 @@ class StationaryEventService implements StationaryEventServiceContract
     public function update(StationaryEvent $stationaryEvent, array $data): StationaryEvent
     {
         if (isset($data['image'])) {
-            $data['image_path'] = $this->saveImage($data['image'], $stationaryEvent->getKey());
+            $data['image_path'] = FileHelper::getFilePath($data['image'], ConstantEnum::DIRECTORY . '/' . $stationaryEvent->getKey() . '/images');
         }
 
         $stationaryEvent = $this->stationaryEventRepository->update($data, $stationaryEvent->getKey());
@@ -123,11 +125,6 @@ class StationaryEventService implements StationaryEventServiceContract
             $user = is_int($detached) ? User::find($detached) : $detached;
             event(new StationaryEventUnassigned($user, $stationaryEvent));
         }
-    }
-
-    private function saveImage(UploadedFile $image, int $stationaryEventId): string
-    {
-        return $image->storePublicly("stationary-events/{$stationaryEventId}/images");
     }
 
     private function prepareListCriteria(OrderDto $orderDto, array $search = []): array
