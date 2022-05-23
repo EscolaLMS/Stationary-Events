@@ -203,10 +203,9 @@ class StationaryEventUpdateApiTest extends TestCase
     public function testUpdateStationaryEventImageFromReusableFile(): void
     {
         Storage::fake();
-
-        $imagePath = ConstantEnum::DIRECTORY . '/' . $this->stationaryEvent->getKey() . '/image.jpg';
-        Storage::makeDirectory(ConstantEnum::DIRECTORY . '/' . $this->stationaryEvent->getKey());
-        copy(__DIR__ . '/../mocks/image.jpg', Storage::path($imagePath));
+        $directoryPath = ConstantEnum::DIRECTORY . "/{$this->stationaryEvent->getKey()}/images";
+        UploadedFile::fake()->image('image.jpg')->storeAs($directoryPath, 'image.jpg');
+        $imagePath = "{$directoryPath}/image.jpg";
 
         $this->response = $this->actingAs($this->user, 'api')
             ->putJson('api/admin/stationary-events/' . $this->stationaryEvent->getKey(), [
