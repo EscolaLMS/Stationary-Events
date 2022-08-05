@@ -68,6 +68,20 @@ class StationaryEventCreateApiTest extends TestCase
         Storage::exists($data->image_path);
     }
 
+    public function testStationaryEventCreateStartAndFinishOnTheSameDay(): void
+    {
+        $stationaryEvent = StationaryEvent::factory([
+            'started_at' => date('Y-m-d'),
+            'finished_at' => date('Y-m-d'),
+        ])->make()->toArray();
+
+        $this->response = $this->actingAs($this->user, 'api')->postJson('api/admin/stationary-events',
+            $stationaryEvent
+        )->assertCreated();
+
+        $this->assertApiResponse($stationaryEvent);
+    }
+
     public function testStationaryEventCreateWithoutImage(): void
     {
         $stationaryEvent = StationaryEvent::factory()->make()->toArray();
