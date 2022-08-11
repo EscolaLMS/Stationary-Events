@@ -5,6 +5,7 @@ namespace EscolaLms\StationaryEvents\Tests\Api;
 use EscolaLms\Core\Tests\CreatesUsers;
 use EscolaLms\StationaryEvents\Database\Seeders\StationaryEventPermissionSeeder;
 use EscolaLms\StationaryEvents\Enum\StationaryEventStatusEnum;
+use EscolaLms\StationaryEvents\Http\Resources\UserResource;
 use EscolaLms\StationaryEvents\Models\StationaryEvent;
 use EscolaLms\StationaryEvents\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -44,22 +45,10 @@ class StationaryEventListApiTest extends TestCase
 
         $this->response->assertJsonFragment([
             'authors' => [
-                [
-                    'id' => $author->getKey(),
-                    'first_name' => $author->first_name,
-                    'last_name' => $author->last_name,
-                    'email' => $author->email,
-                    'path_avatar' => $author->path_avatar,
-                ],
+                UserResource::make($author)->toArray(null),
             ],
             'users' => [
-                [
-                    'id' => $student->getKey(),
-                    'first_name' => $student->first_name,
-                    'last_name' => $student->last_name,
-                    'email' => $student->email,
-                    'path_avatar' => $student->path_avatar,
-                ],
+                UserResource::make($student)->toArray(null),
             ]
         ]);
 
@@ -100,23 +89,11 @@ class StationaryEventListApiTest extends TestCase
             ])
             ->assertJsonFragment([
                 'authors' => [
-                    [
-                        'id' => $author->getKey(),
-                        'first_name' => $author->first_name,
-                        'last_name' => $author->last_name,
-                        'email' => $author->email,
-                        'path_avatar' => $author->path_avatar,
-                    ],
+                    UserResource::make($author)->toArray(null),
                 ],
             ])->assertJsonMissing([
                 'users' => [
-                    [
-                        'id' => $student->getKey(),
-                        'first_name' => $student->first_name,
-                        'last_name' => $student->last_name,
-                        'email' => $student->email,
-                        'path_avatar' => $student->path_avatar,
-                    ],
+                    UserResource::make($student)->toArray(null),
                 ]
             ]);
     }

@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use EscolaLms\Core\Tests\CreatesUsers;
 use EscolaLms\StationaryEvents\Database\Seeders\StationaryEventPermissionSeeder;
 use EscolaLms\StationaryEvents\Enum\StationaryEventStatusEnum;
+use EscolaLms\StationaryEvents\Http\Resources\UserResource;
 use EscolaLms\StationaryEvents\Models\StationaryEvent;
 use EscolaLms\StationaryEvents\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -41,13 +42,7 @@ class StationaryEventShowApiTest extends TestCase
 
         $this->response->assertJsonFragment([
             'authors' => [
-                [
-                    'id' => $this->user->getKey(),
-                    'first_name' => $this->user->first_name,
-                    'last_name' => $this->user->last_name,
-                    'email' => $this->user->email,
-                    'path_avatar' => $this->user->path_avatar,
-                ],
+                UserResource::make($this->user)->toArray(null),
             ],
         ]);
     }
@@ -61,13 +56,7 @@ class StationaryEventShowApiTest extends TestCase
 
         $this->response->assertJsonFragment([
             'authors' => [
-                [
-                    'id' => $this->user->getKey(),
-                    'first_name' => $this->user->first_name,
-                    'last_name' => $this->user->last_name,
-                    'email' => $this->user->email,
-                    'path_avatar' => $this->user->path_avatar,
-                ],
+                UserResource::make($this->user)->toArray(null),
             ],
         ]);
 

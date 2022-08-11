@@ -8,6 +8,7 @@ use EscolaLms\StationaryEvents\Database\Seeders\StationaryEventPermissionSeeder;
 use EscolaLms\StationaryEvents\Enum\ConstantEnum;
 use EscolaLms\StationaryEvents\Events\StationaryEventAuthorAssigned;
 use EscolaLms\StationaryEvents\Events\StationaryEventAuthorUnassigned;
+use EscolaLms\StationaryEvents\Http\Resources\UserResource;
 use EscolaLms\StationaryEvents\Models\StationaryEvent;
 use EscolaLms\StationaryEvents\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -142,13 +143,7 @@ class StationaryEventUpdateApiTest extends TestCase
 
         $this->response->assertJsonFragment([
             'authors' => [
-                [
-                    'id' => $tutor->getKey(),
-                    'first_name' => $tutor->first_name,
-                    'last_name' => $tutor->last_name,
-                    'email' => $tutor->email,
-                    'path_avatar' => $tutor->path_avatar,
-                ],
+                UserResource::make($tutor)->toArray(null),
             ],
         ]);
 
