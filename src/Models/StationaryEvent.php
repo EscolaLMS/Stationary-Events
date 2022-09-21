@@ -80,6 +80,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  *          description="status",
  *          type="string"
  *      ),
+ *      @OA\Property(
+ *          property="agenda",
+ *          description="agenda",
+ *          type="object"
+ *      ),
  * )
  *
  */
@@ -98,7 +103,17 @@ class StationaryEvent extends Model
         'program',
         'image_path',
         'status',
+        'agenda',
     ];
+
+    protected $casts = [
+        'agenda' => 'array',
+    ];
+
+    public function setAgendaAttribute($agenda): void
+    {
+        $this->attributes['agenda'] = json_decode(json_encode($agenda));
+    }
 
     public function users(): BelongsToMany
     {

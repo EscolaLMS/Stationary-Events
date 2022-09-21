@@ -32,6 +32,7 @@ class StationaryEventResource extends JsonResource
             'in_coming' => $this->in_coming,
             'is_ended' => $this->is_ended,
             'is_started' => $this->is_started,
+            'agenda' => $this->agenda,
         ];
 
         return self::apply($fields, $this);

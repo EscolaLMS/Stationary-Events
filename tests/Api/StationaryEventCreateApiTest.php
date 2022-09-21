@@ -10,6 +10,7 @@ use EscolaLms\StationaryEvents\Http\Resources\UserResource;
 use EscolaLms\StationaryEvents\Models\StationaryEvent;
 use EscolaLms\StationaryEvents\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
@@ -17,7 +18,7 @@ use Illuminate\Testing\Fluent\AssertableJson;
 
 class StationaryEventCreateApiTest extends TestCase
 {
-    use DatabaseTransactions, CreatesUsers;
+    use DatabaseTransactions, CreatesUsers, WithFaker;
 
     protected function setUp(): void
     {
@@ -59,7 +60,13 @@ class StationaryEventCreateApiTest extends TestCase
         $this->response = $this->actingAs($this->user, 'api')->postJson(
             'api/admin/stationary-events',
             array_merge($stationaryEvent, [
-                'image' => UploadedFile::fake()->image('image.jpg')
+                'image' => UploadedFile::fake()->image('image.jpg'),
+                'agenda' => json_encode([
+                    'key1' => $this->faker->text,
+                    'key2' => [
+                        'key3' => $this->faker->text,
+                    ],
+                ]),
             ]))
             ->assertCreated();
 

@@ -79,6 +79,11 @@ use Illuminate\Validation\Rule;
  *          description="image",
  *          type="file",
  *      ),
+ *      @OA\Property(
+ *          property="agenda",
+ *          description="agenda",
+ *          type="object",
+ *      ),
  * )
  *
  */
@@ -107,6 +112,7 @@ class CreateStationaryEventRequest extends FormRequest
             'categories' => ['array'],
             'categories.*' => ['integer', 'exists:categories,id'],
             'image' => ['nullable', 'file', 'image'],
+            'agenda' => ['nullable', 'json'],
         ];
     }
 }
