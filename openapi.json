@@ -482,6 +482,10 @@
                     "image": {
                         "description": "image",
                         "type": "file"
+                    },
+                    "agenda": {
+                        "description": "agenda",
+                        "type": "object"
                     }
                 },
                 "type": "object"
@@ -545,6 +549,10 @@
                     "image_path": {
                         "description": "image_path",
                         "type": "string"
+                    },
+                    "agenda": {
+                        "description": "agenda",
+                        "type": "object"
                     }
                 },
                 "type": "object"
@@ -608,6 +616,10 @@
                     "status": {
                         "description": "status",
                         "type": "string"
+                    },
+                    "agenda": {
+                        "description": "agenda",
+                        "type": "object"
                     }
                 },
                 "type": "object"
