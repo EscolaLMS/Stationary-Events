@@ -85,6 +85,11 @@ use Illuminate\Validation\Rule;
  *          description="image_path",
  *          type="string",
  *      ),
+ *      @OA\Property(
+ *          property="agenda",
+ *          description="agenda",
+ *          type="object",
+ *      ),
  * )
  *
  */
@@ -116,6 +121,7 @@ class UpdateStationaryEventRequest extends FormRequest
             'categories.*' => ['integer', 'exists:categories,id'],
             'image' => [new FileOrStringRule(['image'], $prefixPath)],
             'image_path' => ['nullable', 'string', 'max:255'],
+            'agenda' => ['nullable', 'json'],
         ];
     }
 
