@@ -3,11 +3,13 @@
 namespace EscolaLms\StationaryEvents\Services;
 
 use EscolaLms\Auth\Models\User;
+use EscolaLms\Categories\Repositories\Criteria\InCategoriesOrChildrenCriterion;
 use EscolaLms\Core\Dtos\OrderDto;
 use EscolaLms\Core\Repositories\Criteria\Primitives\DateCriterion;
 use EscolaLms\Core\Repositories\Criteria\Primitives\EqualCriterion;
 use EscolaLms\Core\Repositories\Criteria\Primitives\InCriterion;
 use EscolaLms\Core\Repositories\Criteria\Primitives\LikeCriterion;
+use EscolaLms\Core\Repositories\Criteria\Primitives\WhereCriterion;
 use EscolaLms\Courses\Repositories\Criteria\Primitives\OrderCriterion;
 use EscolaLms\Files\Helpers\FileHelper;
 use EscolaLms\StationaryEvents\Enum\ConstantEnum;
@@ -136,11 +138,15 @@ class StationaryEventService implements StationaryEventServiceContract
         }
 
         if (isset($search['name'])) {
-            $criteria[] = new LikeCriterion('name', $search['name']);
+            $criteria[] = new WhereCriterion('name', '%' . $search['name'] . '%', 'ILIKE');
         }
 
         if (isset($search['status'])) {
             $criteria[] = new EqualCriterion('status', $search['status']);
+        }
+
+        if (isset($search['categories'])) {
+            $criteria[] = new InCategoriesOrChildrenCriterion(null, $search['categories']);
         }
 
         return $criteria;
