@@ -296,10 +296,22 @@
                     {
                         "name": "name",
                         "in": "query",
-                        "description": "Stationary event name %LIKE%",
+                        "description": "Stationary event name %ILIKE%",
                         "required": false,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "name": "categories",
+                        "in": "query",
+                        "description": "An array of categories IDs",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "number"
+                            }
                         }
                     }
                 ],
