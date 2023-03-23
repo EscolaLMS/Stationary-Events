@@ -55,12 +55,19 @@ interface StationaryEventApiSwagger
      *      ),
      *      @OA\Parameter(
      *          name="name",
-     *          description="Stationary event name %LIKE%",
+     *          description="Stationary event name %ILIKE%",
      *          required=false,
      *          in="query",
      *          @OA\Schema(
      *              type="string",
      *          ),
+     *      ),
+     *      @OA\Parameter(
+     *          name="categories",
+     *          description="An array of categories IDs",
+     *          required=false,
+     *          in="query",
+     *          @OA\Schema(type="array", @OA\Items(type="number")),
      *      ),
      *      @OA\Response(
      *          response=200,

@@ -3,11 +3,13 @@
 namespace EscolaLms\StationaryEvents\Services;
 
 use EscolaLms\Auth\Models\User;
+use EscolaLms\Categories\Repositories\Criteria\InCategoriesOrChildrenCriterion;
 use EscolaLms\Core\Dtos\OrderDto;
 use EscolaLms\Core\Repositories\Criteria\Primitives\DateCriterion;
 use EscolaLms\Core\Repositories\Criteria\Primitives\EqualCriterion;
 use EscolaLms\Core\Repositories\Criteria\Primitives\InCriterion;
 use EscolaLms\Core\Repositories\Criteria\Primitives\LikeCriterion;
+use EscolaLms\Core\Repositories\Criteria\Primitives\WhereCriterion;
 use EscolaLms\Courses\Repositories\Criteria\Primitives\OrderCriterion;
 use EscolaLms\Files\Helpers\FileHelper;
 use EscolaLms\StationaryEvents\Enum\ConstantEnum;
@@ -21,6 +23,7 @@ use EscolaLms\StationaryEvents\Repositories\Contracts\StationaryEventRepositoryC
 use EscolaLms\StationaryEvents\Services\Contracts\StationaryEventServiceContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
 
 class StationaryEventService implements StationaryEventServiceContract
 {
@@ -136,11 +139,16 @@ class StationaryEventService implements StationaryEventServiceContract
         }
 
         if (isset($search['name'])) {
-            $criteria[] = new LikeCriterion('name', $search['name']);
+            $like = DB::connection()->getPdo()->getAttribute(\PDO::ATTR_DRIVER_NAME) === 'pgsql' ? 'ILIKE' : 'LIKE';
+            $criteria[] = new WhereCriterion('name', '%' . $search['name'] . '%', $like);
         }
 
         if (isset($search['status'])) {
             $criteria[] = new EqualCriterion('status', $search['status']);
+        }
+
+        if (isset($search['categories'])) {
+            $criteria[] = new InCategoriesOrChildrenCriterion(null, $search['categories']);
         }
 
         return $criteria;

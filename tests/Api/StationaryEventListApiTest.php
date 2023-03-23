@@ -2,6 +2,7 @@
 
 namespace EscolaLms\StationaryEvents\Tests\Api;
 
+use EscolaLms\Categories\Models\Category;
 use EscolaLms\Core\Tests\CreatesUsers;
 use EscolaLms\StationaryEvents\Database\Seeders\StationaryEventPermissionSeeder;
 use EscolaLms\StationaryEvents\Enum\StationaryEventStatusEnum;
@@ -61,6 +62,44 @@ class StationaryEventListApiTest extends TestCase
             ]);
     }
 
+    public function testStationaryEventsAdminListFilterByCategories(): void
+    {
+        $category = Category::factory()->create();
+        $category2 = Category::factory()->create();
+        $stationaryEvent = StationaryEvent::factory()->create([
+            'status' => StationaryEventStatusEnum::PUBLISHED
+        ]);
+
+        $stationaryEvent2 = StationaryEvent::factory([
+            'status' => StationaryEventStatusEnum::PUBLISHED
+        ])->create();
+
+        $stationaryEvent->categories()->save($category);
+        $stationaryEvent2->categories()->save($category2);
+
+        $this->response = $this->actingAs($this->user, 'api')
+            ->json(
+                'GET',
+                'api/admin/stationary-events',
+                [
+                    'categories' => [
+                        $category->getKey(),
+                        $category2->getKey(),
+                    ]
+                ]
+            )
+            ->assertOk()
+            ->assertJsonCount(2, 'data')
+            ->assertJsonFragment([
+                'id' => $stationaryEvent->getKey(),
+                'name' => $stationaryEvent->name,
+            ])
+            ->assertJsonFragment([
+                'id' => $stationaryEvent2->getKey(),
+                'name' => $stationaryEvent2->name,
+            ]);
+    }
+
     public function testStationaryEventsPublicListWithFilter(): void
     {
         $stationaryEvent = StationaryEvent::factory()->create([
@@ -95,6 +134,48 @@ class StationaryEventListApiTest extends TestCase
                 'users' => [
                     UserResource::make($student)->toArray(null),
                 ]
+            ]);
+    }
+
+    public function testStationaryEventsPublicListFilterByCategories(): void
+    {
+        $category = Category::factory()->create();
+        $category2 = Category::factory()->create();
+        $stationaryEvent = StationaryEvent::factory()->create([
+            'status' => StationaryEventStatusEnum::PUBLISHED
+        ]);
+
+        $stationaryEvent2 = StationaryEvent::factory([
+            'status' => StationaryEventStatusEnum::PUBLISHED
+        ])->create();
+
+        $stationaryEvent->categories()->save($category);
+        $stationaryEvent2->categories()->save($category2);
+
+        $student = $this->makeStudent();
+        $stationaryEvent->users()->sync($student);
+        $author = $this->makeInstructor();
+        $stationaryEvent->authors()->sync($author);
+
+        $this->response = $this->json(
+            'GET',
+            'api/stationary-events',
+            [
+                'categories' => [
+                    $category->getKey(),
+                    $category2->getKey(),
+                ]
+            ]
+        )
+            ->assertOk()
+            ->assertJsonCount(2, 'data')
+            ->assertJsonFragment([
+                'id' => $stationaryEvent->getKey(),
+                'name' => $stationaryEvent->name,
+            ])
+            ->assertJsonFragment([
+                'id' => $stationaryEvent2->getKey(),
+                'name' => $stationaryEvent2->name,
             ]);
     }
 
