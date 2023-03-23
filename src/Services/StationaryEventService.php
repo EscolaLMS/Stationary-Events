@@ -23,6 +23,7 @@ use EscolaLms\StationaryEvents\Repositories\Contracts\StationaryEventRepositoryC
 use EscolaLms\StationaryEvents\Services\Contracts\StationaryEventServiceContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
 
 class StationaryEventService implements StationaryEventServiceContract
 {
@@ -138,7 +139,8 @@ class StationaryEventService implements StationaryEventServiceContract
         }
 
         if (isset($search['name'])) {
-            $criteria[] = new WhereCriterion('name', '%' . $search['name'] . '%', 'ILIKE');
+            $like = DB::connection()->getPdo()->getAttribute(\PDO::ATTR_DRIVER_NAME) === 'pgsql' ? 'ILIKE' : 'LIKE';
+            $criteria[] = new WhereCriterion('name', '%' . $search['name'] . '%', $like);
         }
 
         if (isset($search['status'])) {
