@@ -186,11 +186,17 @@ class StationaryEventListApiTest extends TestCase
         $stationaryEvent->users()->sync($student->getKey());
 
         $stationaryEvent2 = StationaryEvent::factory()->create();
+
+        $this->travel(5)->days();
+
         $stationaryEvent2->users()->sync($student->getKey());
 
         $this->response = $this->actingAs($student, 'api')->getJson('api/stationary-events/me')
             ->assertOk()
             ->assertJsonCount(2, 'data');
+
+        $this->assertTrue($this->response->json('data.0.id') === $stationaryEvent2->getKey());
+        $this->assertTrue($this->response->json('data.1.id') === $stationaryEvent->getKey());
 
         $this->response = $this->actingAs($student, 'api')->getJson('api/stationary-events/me?name=' . $stationaryEvent->name)
             ->assertOk()
@@ -199,5 +205,6 @@ class StationaryEventListApiTest extends TestCase
                 'id' => $stationaryEvent->getKey(),
                 'name' => $stationaryEvent->name,
             ]);
+
     }
 }

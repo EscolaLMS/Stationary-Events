@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class StationaryEventAuthorPivot extends Pivot
 {
+    const TABLE_NAME = 'stationary_event_authors';
+    protected $table = self::TABLE_NAME;
+
     public function author(): BelongsTo
     {
         return $this->belongsTo(User::class);
