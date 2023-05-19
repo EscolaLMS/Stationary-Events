@@ -183,20 +183,25 @@ class StationaryEventListApiTest extends TestCase
     {
         $student = $this->makeStudent();
         $stationaryEvent = StationaryEvent::factory()->create();
-        $stationaryEvent->users()->sync($student->getKey());
-
         $stationaryEvent2 = StationaryEvent::factory()->create();
+        $stationaryEvent3 = StationaryEvent::factory()->create();
+        $stationaryEvent->users()->sync($student->getKey());
 
         $this->travel(5)->days();
 
         $stationaryEvent2->users()->sync($student->getKey());
 
+        $this->travel(5)->days();
+
+        $stationaryEvent3->users()->sync($student->getKey());
+
         $this->response = $this->actingAs($student, 'api')->getJson('api/stationary-events/me')
             ->assertOk()
-            ->assertJsonCount(2, 'data');
+            ->assertJsonCount(3, 'data');
 
-        $this->assertTrue($this->response->json('data.0.id') === $stationaryEvent2->getKey());
-        $this->assertTrue($this->response->json('data.1.id') === $stationaryEvent->getKey());
+        $this->assertTrue($this->response->json('data.0.id') === $stationaryEvent3->getKey());
+        $this->assertTrue($this->response->json('data.1.id') === $stationaryEvent2->getKey());
+        $this->assertTrue($this->response->json('data.2.id') === $stationaryEvent->getKey());
 
         $this->response = $this->actingAs($student, 'api')->getJson('api/stationary-events/me?name=' . $stationaryEvent->name)
             ->assertOk()

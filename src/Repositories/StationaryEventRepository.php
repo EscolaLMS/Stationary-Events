@@ -48,13 +48,15 @@ class StationaryEventRepository extends BaseRepository implements StationaryEven
             ->orWhereHas('authors', function ($query) use ($userId) {
                 $query->where('author_id', $userId);
             })
-            ->select(StationaryEvent::TABLE_NAME . '.*', DB::raw(
-                "(SELECT MAX(created_at) FROM (
-                SELECT created_at FROM " . StationaryEventUserPivot::TABLE_NAME . " WHERE stationary_event_id = stationary_events.id AND user_id = $userId
-                UNION ALL
-                SELECT created_at FROM " . StationaryEventAuthorPivot::TABLE_NAME . " WHERE stationary_event_id = stationary_events.id AND author_id = $userId
-            ) AS x) AS max_created_at"))
+            ->select(StationaryEvent::TABLE_NAME . '.*', DB::raw("
+                (SELECT MAX(created_at) FROM (
+                    SELECT user_pivot.created_at FROM " . StationaryEventUserPivot::TABLE_NAME . " AS user_pivot
+                    WHERE user_pivot.stationary_event_id = " . StationaryEvent::TABLE_NAME . ".id AND user_pivot.user_id = $userId
+                    UNION ALL
+                    SELECT author_pivot.created_at FROM " . StationaryEventAuthorPivot::TABLE_NAME . " AS author_pivot
+                    WHERE author_pivot.stationary_event_id = " . StationaryEvent::TABLE_NAME . ".id AND author_pivot.author_id = $userId
+                ) AS x) AS max_created_at
+            "))
             ->orderBy('max_created_at', 'desc');
-
     }
 }
