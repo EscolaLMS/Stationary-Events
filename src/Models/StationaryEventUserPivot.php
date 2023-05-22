@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class StationaryEventUserPivot extends Pivot
 {
-    protected $table = 'stationary_event_users';
+    const TABLE_NAME = 'stationary_event_users';
+    protected $table = self::TABLE_NAME;
 
     public function user(): BelongsTo
     {

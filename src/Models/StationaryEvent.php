@@ -90,6 +90,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  */
 class StationaryEvent extends Model
 {
+    const TABLE_NAME = 'stationary_events';
+
     use HasFactory;
 
     protected $fillable = [
@@ -117,12 +119,28 @@ class StationaryEvent extends Model
 
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'stationary_event_users', 'stationary_event_id', 'user_id')->using(StationaryEventUserPivot::class);
+        return $this
+            ->belongsToMany(
+                User::class,
+                'stationary_event_users',
+                'stationary_event_id',
+                'user_id'
+            )
+            ->using(StationaryEventUserPivot::class)
+            ->withTimestamps();
     }
 
     public function authors(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'stationary_event_authors', 'stationary_event_id', 'author_id')->using(StationaryEventAuthorPivot::class);
+        return $this
+            ->belongsToMany(
+                User::class,
+                'stationary_event_authors',
+                'stationary_event_id',
+                'author_id'
+            )
+            ->using(StationaryEventAuthorPivot::class)
+            ->withTimestamps();
     }
 
     public function categories(): BelongsToMany
