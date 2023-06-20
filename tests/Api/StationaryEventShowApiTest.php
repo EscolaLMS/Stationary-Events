@@ -47,6 +47,12 @@ class StationaryEventShowApiTest extends TestCase
         ]);
     }
 
+    public function testStationaryEventShowNotFound(): void
+    {
+        $this->response = $this->actingAs($this->user, 'api')->json('GET', 'api/admin/stationary-events/0');
+        $this->response->assertStatus(422);
+    }
+
     public function testStationaryEventPublicShow(): void
     {
         $this->response = $this->getJson('api/stationary-events/' . $this->stationaryEvent->getKey())

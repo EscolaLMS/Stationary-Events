@@ -5,6 +5,7 @@ namespace EscolaLms\StationaryEvents\Http\Requests;
 use EscolaLms\StationaryEvents\Models\StationaryEvent;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
+use EscolaLms\StationaryEvents\Exceptions\StationaryEventNotFoundException;
 
 class ReadStationaryEventRequest extends FormRequest
 {
@@ -20,6 +21,12 @@ class ReadStationaryEventRequest extends FormRequest
 
     public function getStationaryEvent(): StationaryEvent
     {
-        return StationaryEvent::findOrFail($this->route('id'));
+        $stationaryEvent = StationaryEvent::find($this->route('id'));
+
+        if (!$stationaryEvent) {
+            throw new StationaryEventNotFoundException();
+        }
+
+        return $stationaryEvent;
     }
 }
