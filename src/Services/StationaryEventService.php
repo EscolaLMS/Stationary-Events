@@ -10,7 +10,6 @@ use EscolaLms\Core\Repositories\Criteria\Primitives\EqualCriterion;
 use EscolaLms\Core\Repositories\Criteria\Primitives\InCriterion;
 use EscolaLms\Core\Repositories\Criteria\Primitives\LikeCriterion;
 use EscolaLms\Core\Repositories\Criteria\Primitives\WhereCriterion;
-use EscolaLms\Courses\Repositories\Criteria\Primitives\OrderCriterion;
 use EscolaLms\Files\Helpers\FileHelper;
 use EscolaLms\StationaryEvents\Enum\ConstantEnum;
 use EscolaLms\StationaryEvents\Enum\StationaryEventStatusEnum;
@@ -20,6 +19,7 @@ use EscolaLms\StationaryEvents\Events\StationaryEventAuthorUnassigned;
 use EscolaLms\StationaryEvents\Events\StationaryEventUnassigned;
 use EscolaLms\StationaryEvents\Models\StationaryEvent;
 use EscolaLms\StationaryEvents\Repositories\Contracts\StationaryEventRepositoryContract;
+use EscolaLms\StationaryEvents\Repositories\Criteria\Primitives\OrderCriterion;
 use EscolaLms\StationaryEvents\Services\Contracts\StationaryEventServiceContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\UploadedFile;
@@ -59,6 +59,7 @@ class StationaryEventService implements StationaryEventServiceContract
 
     public function create(array $data): StationaryEvent
     {
+        /** @var StationaryEvent $stationaryEvent */
         $stationaryEvent = $this->stationaryEventRepository->create($data);
         $this->syncAuthors($stationaryEvent, $data['authors'] ?? []);
 
@@ -80,6 +81,7 @@ class StationaryEventService implements StationaryEventServiceContract
             $data['image_path'] = FileHelper::getFilePath($data['image'], ConstantEnum::DIRECTORY . '/' . $stationaryEvent->getKey() . '/images');
         }
 
+        /** @var StationaryEvent $stationaryEvent */
         $stationaryEvent = $this->stationaryEventRepository->update($data, $stationaryEvent->getKey());
         $this->syncAuthors($stationaryEvent, $data['authors'] ?? []);
 
@@ -122,6 +124,7 @@ class StationaryEventService implements StationaryEventServiceContract
         }
     }
 
+    // @phpstan-ignore-next-line
     private function dispatchEventForUsersDetachedToStationaryEvent(StationaryEvent $stationaryEvent, array $users = []): void
     {
         foreach ($users as $detached) {
