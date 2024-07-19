@@ -2,6 +2,7 @@
 namespace EscolaLms\StationaryEvents\Exceptions;
 
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
+use Throwable;
 
 class StationaryEventNotFoundException extends UnprocessableEntityHttpException
 {

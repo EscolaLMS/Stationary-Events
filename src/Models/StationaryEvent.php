@@ -87,6 +87,20 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  *      ),
  * )
  *
+ * @property int $id
+ * @property string $name
+ * @property string $description
+ * @property string $short_description
+ * @property Carbon|null $started_at
+ * @property Carbon|null $finished_at
+ * @property int $max_participants
+ * @property string $place
+ * @property string $program
+ * @property string $image_path
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property object $agenda
+ * @property string $status
  */
 class StationaryEvent extends Model
 {

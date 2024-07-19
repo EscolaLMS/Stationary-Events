@@ -7,7 +7,7 @@ class StationaryEventAdminResource extends StationaryEventResource
     public function toArray($request): array
     {
         return array_merge(parent::toArray($request), [
-            'users' => $this->users ? UserResource::collection($this->users) : [],
+            'users' => $this->resource->users ? UserResource::collection($this->resource->users) : [],
         ]);
     }
 }
