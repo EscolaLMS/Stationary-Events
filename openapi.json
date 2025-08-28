@@ -459,11 +459,13 @@
                     },
                     "started_at": {
                         "description": "started_at",
-                        "type": "datetime"
+                        "type": "string",
+                        "format": "date-time"
                     },
                     "finished_at": {
                         "description": "finished_at",
-                        "type": "datetime"
+                        "type": "string",
+                        "format": "date-time"
                     },
                     "max_participants": {
                         "description": "max_participants",
@@ -522,11 +524,13 @@
                     },
                     "started_at": {
                         "description": "started_at",
-                        "type": "datetime"
+                        "type": "string",
+                        "format": "date-time"
                     },
                     "finished_at": {
                         "description": "finished_at",
-                        "type": "datetime"
+                        "type": "string",
+                        "format": "date-time"
                     },
                     "max_participants": {
                         "description": "max_participants",
@@ -595,11 +599,13 @@
                     },
                     "started_at": {
                         "description": "started_at",
-                        "type": "datetime"
+                        "type": "string",
+                        "format": "date-time"
                     },
                     "finished_at": {
                         "description": "finished_at",
-                        "type": "datetime"
+                        "type": "string",
+                        "format": "date-time"
                     },
                     "max_participants": {
                         "description": "max_participants",
@@ -619,11 +625,13 @@
                     },
                     "created_at": {
                         "description": "created_at",
-                        "type": "datetime"
+                        "type": "string",
+                        "format": "date-time"
                     },
                     "updated_at": {
                         "description": "updated_at",
-                        "type": "datetime"
+                        "type": "string",
+                        "format": "date-time"
                     },
                     "status": {
                         "description": "status",
@@ -637,5 +645,15 @@
                 "type": "object"
             }
         }
-    }
+    },
+    "tags": [
+        {
+            "name": "Admin Stationary Events",
+            "description": "Admin Stationary Events"
+        },
+        {
+            "name": "Stationary Events",
+            "description": "Stationary Events"
+        }
+    ]
 }
